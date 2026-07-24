@@ -1,0 +1,10 @@
+.gcloudignore
+.git
+.gradle
+.idea
+.kotlin
+build
+out
+.env
+.env.*
+*.iml

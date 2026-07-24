@@ -1,0 +1,10 @@
+.gradle
+.idea
+.kotlin
+build
+out
+.env
+.env.*
+*.iml
+Dockerfile*
+!Dockerfile

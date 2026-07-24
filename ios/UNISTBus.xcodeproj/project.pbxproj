@@ -1,0 +1,651 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		006C408BD4CFC5814CB6B251 /* BusArrivalActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C033BC722E8440C38DEECF5D /* BusArrivalActivityAttributes.swift */; };
+		232CAD462406E6ACD61702B6 /* ArrivalsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7168DE296765939667A75AD0 /* ArrivalsStore.swift */; };
+		319546EEF383C7B5E79BAC17 /* ArrivalClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF77F2A4F667F38BE615B862 /* ArrivalClient.swift */; };
+		36424D315F56F18FA69ABD07 /* ArrivalDecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2976540859AC08D063C1E27 /* ArrivalDecodingTests.swift */; };
+		408B4D0F143FF3749D6C0158 /* AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3359CC18A380F995F069E217 /* AppConfiguration.swift */; };
+		4F2FC1F93CA8AD686DA3DBA5 /* ActivityKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9B64C20580FA25012F22336 /* ActivityKit.framework */; };
+		543984C037438526D8F05DED /* ArrivalStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = EADBA3B951EC33A8C2C668C1 /* ArrivalStatus.swift */; };
+		547905A4F4D1D591F779763C /* ArrivalPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBAFA1C9FC3DE821952AD2DA /* ArrivalPresentation.swift */; };
+		56855505E747FB55A976E34A /* Arrival.swift in Sources */ = {isa = PBXBuildFile; fileRef = E424C6BC3667D4CA2454B89F /* Arrival.swift */; };
+		6620BABF31EC34BD044AFD73 /* ArrivalPresentationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0CE33A2935BCB86BF2FDB2 /* ArrivalPresentationTests.swift */; };
+		74D670AB4DF7572699324C3B /* MainBusStop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3085CCB0AC8DF9AC9F301679 /* MainBusStop.swift */; };
+		7B1D47B077F6B709D049811A /* UNISTBusLiveActivityBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867B1AA2C03078D03F65C4EB /* UNISTBusLiveActivityBundle.swift */; };
+		7FDCC6DC06CEEC98BD7C8BA3 /* DateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 758466BCE11DA62C004765DB /* DateProvider.swift */; };
+		828C31F1D134019FF3FB2A68 /* AppConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC874A116A5C71E2A50B7AAE /* AppConfigurationTests.swift */; };
+		87DE2767E5F4418B9AC87E5D /* ArrivalsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 238B0EB1160C6E8DAAD52F55 /* ArrivalsScreen.swift */; };
+		95E331A49E93A5BC9F5F0880 /* BusArrivalActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C033BC722E8440C38DEECF5D /* BusArrivalActivityAttributes.swift */; };
+		B4291639F3BF1807F7B4DFF8 /* LiveActivityClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01B6789047DA5A7969077C6 /* LiveActivityClient.swift */; };
+		B73931236954B26916433779 /* ArrivalRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5584DC243156A2B42A53265F /* ArrivalRow.swift */; };
+		BB964E3FF47AC9625F3AD22A /* ArrivalCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28572A12D7DCD57F456D148 /* ArrivalCacheTests.swift */; };
+		BCE1C660B4037D19673DA18A /* BusArrivalLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 996898AC4AECF5B97D019A7E /* BusArrivalLiveActivity.swift */; };
+		C41D541EBDBCCE76DBF6CD16 /* StopArrival.swift in Sources */ = {isa = PBXBuildFile; fileRef = D18F42C308F3EA7EB68FF6F6 /* StopArrival.swift */; };
+		CA36D1BD4C4F792B3D4A07E4 /* ArrivalStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = EADBA3B951EC33A8C2C668C1 /* ArrivalStatus.swift */; };
+		CC8C00DC60502EF23954ABE8 /* ArrivalCacheClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1137E0C34CD8855139A81D0 /* ArrivalCacheClient.swift */; };
+		CF2A2A7FEF552DF9FCBF6811 /* UNISTBusApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A53495F842704C3D8F47C04 /* UNISTBusApp.swift */; };
+		DD8C224028DB8519BF130621 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A11A04C749FAE7DB769B6573 /* WidgetKit.framework */; };
+		E01882342E331441E284C7E6 /* UNISTBusLiveActivity.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 33A6538A16DCA3CA22234E84 /* UNISTBusLiveActivity.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		E2EEBC599B85113C51CDFED0 /* ArrivalsStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BD96828494EC844EEA0A076 /* ArrivalsStoreTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1F65A24463513A1BBE0062BD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B103D0EB94D29DB62BCBA71F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 61C184FD16FC1D53AC05A365;
+			remoteInfo = UNISTBus;
+		};
+		EBD6066EF5BBEA090CC2D910 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B103D0EB94D29DB62BCBA71F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D1CEDCBC2D01F2957584CFF2;
+			remoteInfo = UNISTBusLiveActivity;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8E9F2409A0F7FB3F15BFD682 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				E01882342E331441E284C7E6 /* UNISTBusLiveActivity.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		1A53495F842704C3D8F47C04 /* UNISTBusApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UNISTBusApp.swift; sourceTree = "<group>"; };
+		1BD96828494EC844EEA0A076 /* ArrivalsStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalsStoreTests.swift; sourceTree = "<group>"; };
+		238B0EB1160C6E8DAAD52F55 /* ArrivalsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalsScreen.swift; sourceTree = "<group>"; };
+		3085CCB0AC8DF9AC9F301679 /* MainBusStop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainBusStop.swift; sourceTree = "<group>"; };
+		3359CC18A380F995F069E217 /* AppConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfiguration.swift; sourceTree = "<group>"; };
+		33A6538A16DCA3CA22234E84 /* UNISTBusLiveActivity.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = UNISTBusLiveActivity.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		5584DC243156A2B42A53265F /* ArrivalRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalRow.swift; sourceTree = "<group>"; };
+		657316C1B2AE12CA8131270C /* UNISTBusTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = UNISTBusTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6D0CE33A2935BCB86BF2FDB2 /* ArrivalPresentationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalPresentationTests.swift; sourceTree = "<group>"; };
+		7168DE296765939667A75AD0 /* ArrivalsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalsStore.swift; sourceTree = "<group>"; };
+		758466BCE11DA62C004765DB /* DateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateProvider.swift; sourceTree = "<group>"; };
+		867B1AA2C03078D03F65C4EB /* UNISTBusLiveActivityBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UNISTBusLiveActivityBundle.swift; sourceTree = "<group>"; };
+		996898AC4AECF5B97D019A7E /* BusArrivalLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusArrivalLiveActivity.swift; sourceTree = "<group>"; };
+		A11A04C749FAE7DB769B6573 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		A28572A12D7DCD57F456D148 /* ArrivalCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalCacheTests.swift; sourceTree = "<group>"; };
+		A2976540859AC08D063C1E27 /* ArrivalDecodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalDecodingTests.swift; sourceTree = "<group>"; };
+		A9B64C20580FA25012F22336 /* ActivityKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ActivityKit.framework; path = System/Library/Frameworks/ActivityKit.framework; sourceTree = SDKROOT; };
+		C033BC722E8440C38DEECF5D /* BusArrivalActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusArrivalActivityAttributes.swift; sourceTree = "<group>"; };
+		C1137E0C34CD8855139A81D0 /* ArrivalCacheClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalCacheClient.swift; sourceTree = "<group>"; };
+		CBAFA1C9FC3DE821952AD2DA /* ArrivalPresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalPresentation.swift; sourceTree = "<group>"; };
+		CF77F2A4F667F38BE615B862 /* ArrivalClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalClient.swift; sourceTree = "<group>"; };
+		D18F42C308F3EA7EB68FF6F6 /* StopArrival.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopArrival.swift; sourceTree = "<group>"; };
+		DC532AED913F8E78D426F5E5 /* UNISTBus.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = UNISTBus.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DC874A116A5C71E2A50B7AAE /* AppConfigurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfigurationTests.swift; sourceTree = "<group>"; };
+		E424C6BC3667D4CA2454B89F /* Arrival.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Arrival.swift; sourceTree = "<group>"; };
+		EADBA3B951EC33A8C2C668C1 /* ArrivalStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalStatus.swift; sourceTree = "<group>"; };
+		F01B6789047DA5A7969077C6 /* LiveActivityClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityClient.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A9706DE7731127B46E9F0080 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4F2FC1F93CA8AD686DA3DBA5 /* ActivityKit.framework in Frameworks */,
+				DD8C224028DB8519BF130621 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		01D1055C38C40F295ED346A7 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A9B64C20580FA25012F22336 /* ActivityKit.framework */,
+				A11A04C749FAE7DB769B6573 /* WidgetKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		09364B7234FDDEC934301666 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				3359CC18A380F995F069E217 /* AppConfiguration.swift */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		2009600228E5133017D39A8D /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				EADBA3B951EC33A8C2C668C1 /* ArrivalStatus.swift */,
+				C033BC722E8440C38DEECF5D /* BusArrivalActivityAttributes.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		26773D9D4C4889117C09ACB5 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				E424C6BC3667D4CA2454B89F /* Arrival.swift */,
+				CBAFA1C9FC3DE821952AD2DA /* ArrivalPresentation.swift */,
+				3085CCB0AC8DF9AC9F301679 /* MainBusStop.swift */,
+				D18F42C308F3EA7EB68FF6F6 /* StopArrival.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		3DA894F1064A1CFDA11B7CD1 /* Arrivals */ = {
+			isa = PBXGroup;
+			children = (
+				5584DC243156A2B42A53265F /* ArrivalRow.swift */,
+				238B0EB1160C6E8DAAD52F55 /* ArrivalsScreen.swift */,
+				7168DE296765939667A75AD0 /* ArrivalsStore.swift */,
+			);
+			path = Arrivals;
+			sourceTree = "<group>";
+		};
+		8DB141B8B1652AC3ED8140B5 /* UNISTBus */ = {
+			isa = PBXGroup;
+			children = (
+				1A53495F842704C3D8F47C04 /* UNISTBusApp.swift */,
+				3DA894F1064A1CFDA11B7CD1 /* Arrivals */,
+				09364B7234FDDEC934301666 /* Config */,
+				26773D9D4C4889117C09ACB5 /* Model */,
+				A68E494AC3EC6BF5278B4401 /* Services */,
+			);
+			path = UNISTBus;
+			sourceTree = "<group>";
+		};
+		905055CFD920E32661EA97C5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DC532AED913F8E78D426F5E5 /* UNISTBus.app */,
+				33A6538A16DCA3CA22234E84 /* UNISTBusLiveActivity.appex */,
+				657316C1B2AE12CA8131270C /* UNISTBusTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		95814A1CCEF48460E24F7B8D = {
+			isa = PBXGroup;
+			children = (
+				2009600228E5133017D39A8D /* Shared */,
+				8DB141B8B1652AC3ED8140B5 /* UNISTBus */,
+				B2F3BBEDF9508A1829BC9612 /* UNISTBusLiveActivity */,
+				FF20A0AF15A73996087D3EEB /* UNISTBusTests */,
+				01D1055C38C40F295ED346A7 /* Frameworks */,
+				905055CFD920E32661EA97C5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A68E494AC3EC6BF5278B4401 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				C1137E0C34CD8855139A81D0 /* ArrivalCacheClient.swift */,
+				CF77F2A4F667F38BE615B862 /* ArrivalClient.swift */,
+				758466BCE11DA62C004765DB /* DateProvider.swift */,
+				F01B6789047DA5A7969077C6 /* LiveActivityClient.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		B2F3BBEDF9508A1829BC9612 /* UNISTBusLiveActivity */ = {
+			isa = PBXGroup;
+			children = (
+				996898AC4AECF5B97D019A7E /* BusArrivalLiveActivity.swift */,
+				867B1AA2C03078D03F65C4EB /* UNISTBusLiveActivityBundle.swift */,
+			);
+			path = UNISTBusLiveActivity;
+			sourceTree = "<group>";
+		};
+		FF20A0AF15A73996087D3EEB /* UNISTBusTests */ = {
+			isa = PBXGroup;
+			children = (
+				DC874A116A5C71E2A50B7AAE /* AppConfigurationTests.swift */,
+				A28572A12D7DCD57F456D148 /* ArrivalCacheTests.swift */,
+				A2976540859AC08D063C1E27 /* ArrivalDecodingTests.swift */,
+				6D0CE33A2935BCB86BF2FDB2 /* ArrivalPresentationTests.swift */,
+				1BD96828494EC844EEA0A076 /* ArrivalsStoreTests.swift */,
+			);
+			path = UNISTBusTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		61C184FD16FC1D53AC05A365 /* UNISTBus */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C34F2A9869F48F8E7FDCFA65 /* Build configuration list for PBXNativeTarget "UNISTBus" */;
+			buildPhases = (
+				334D964837FFE4B1DF290E59 /* Sources */,
+				8E9F2409A0F7FB3F15BFD682 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EC14D626F0A6A60F1D771994 /* PBXTargetDependency */,
+			);
+			name = UNISTBus;
+			packageProductDependencies = (
+			);
+			productName = UNISTBus;
+			productReference = DC532AED913F8E78D426F5E5 /* UNISTBus.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A57CA2DCB42B279C7F05730F /* UNISTBusTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 66A7B90894FE48BF98AB34F0 /* Build configuration list for PBXNativeTarget "UNISTBusTests" */;
+			buildPhases = (
+				72FA57C83B5DB70C95DCD3A5 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				08DE407639896D2AF20AC5E9 /* PBXTargetDependency */,
+			);
+			name = UNISTBusTests;
+			packageProductDependencies = (
+			);
+			productName = UNISTBusTests;
+			productReference = 657316C1B2AE12CA8131270C /* UNISTBusTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		D1CEDCBC2D01F2957584CFF2 /* UNISTBusLiveActivity */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 60FCDA1D31C76AACA04D313E /* Build configuration list for PBXNativeTarget "UNISTBusLiveActivity" */;
+			buildPhases = (
+				2EE95264BFFC76D1BBB74AAE /* Sources */,
+				A9706DE7731127B46E9F0080 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = UNISTBusLiveActivity;
+			packageProductDependencies = (
+			);
+			productName = UNISTBusLiveActivity;
+			productReference = 33A6538A16DCA3CA22234E84 /* UNISTBusLiveActivity.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B103D0EB94D29DB62BCBA71F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 7B599E6A0F17B2EC4E20FA05 /* Build configuration list for PBXProject "UNISTBus" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 95814A1CCEF48460E24F7B8D;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 905055CFD920E32661EA97C5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				61C184FD16FC1D53AC05A365 /* UNISTBus */,
+				D1CEDCBC2D01F2957584CFF2 /* UNISTBusLiveActivity */,
+				A57CA2DCB42B279C7F05730F /* UNISTBusTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2EE95264BFFC76D1BBB74AAE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				543984C037438526D8F05DED /* ArrivalStatus.swift in Sources */,
+				006C408BD4CFC5814CB6B251 /* BusArrivalActivityAttributes.swift in Sources */,
+				BCE1C660B4037D19673DA18A /* BusArrivalLiveActivity.swift in Sources */,
+				7B1D47B077F6B709D049811A /* UNISTBusLiveActivityBundle.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		334D964837FFE4B1DF290E59 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				408B4D0F143FF3749D6C0158 /* AppConfiguration.swift in Sources */,
+				56855505E747FB55A976E34A /* Arrival.swift in Sources */,
+				CC8C00DC60502EF23954ABE8 /* ArrivalCacheClient.swift in Sources */,
+				319546EEF383C7B5E79BAC17 /* ArrivalClient.swift in Sources */,
+				547905A4F4D1D591F779763C /* ArrivalPresentation.swift in Sources */,
+				B73931236954B26916433779 /* ArrivalRow.swift in Sources */,
+				CA36D1BD4C4F792B3D4A07E4 /* ArrivalStatus.swift in Sources */,
+				87DE2767E5F4418B9AC87E5D /* ArrivalsScreen.swift in Sources */,
+				232CAD462406E6ACD61702B6 /* ArrivalsStore.swift in Sources */,
+				95E331A49E93A5BC9F5F0880 /* BusArrivalActivityAttributes.swift in Sources */,
+				7FDCC6DC06CEEC98BD7C8BA3 /* DateProvider.swift in Sources */,
+				B4291639F3BF1807F7B4DFF8 /* LiveActivityClient.swift in Sources */,
+				74D670AB4DF7572699324C3B /* MainBusStop.swift in Sources */,
+				C41D541EBDBCCE76DBF6CD16 /* StopArrival.swift in Sources */,
+				CF2A2A7FEF552DF9FCBF6811 /* UNISTBusApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		72FA57C83B5DB70C95DCD3A5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				828C31F1D134019FF3FB2A68 /* AppConfigurationTests.swift in Sources */,
+				BB964E3FF47AC9625F3AD22A /* ArrivalCacheTests.swift in Sources */,
+				36424D315F56F18FA69ABD07 /* ArrivalDecodingTests.swift in Sources */,
+				6620BABF31EC34BD044AFD73 /* ArrivalPresentationTests.swift in Sources */,
+				E2EEBC599B85113C51CDFED0 /* ArrivalsStoreTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		08DE407639896D2AF20AC5E9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 61C184FD16FC1D53AC05A365 /* UNISTBus */;
+			targetProxy = 1F65A24463513A1BBE0062BD /* PBXContainerItemProxy */;
+		};
+		EC14D626F0A6A60F1D771994 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D1CEDCBC2D01F2957584CFF2 /* UNISTBusLiveActivity */;
+			targetProxy = EBD6066EF5BBEA090CC2D910 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		094121F4B31547A359CAFE2D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = UNISTBus/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.UNISTBus;
+				PRODUCT_NAME = UNISTBus;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		18D5347DBE86CDCBCDB7A43D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				UNIST_BUS_API_BASE_URL = "http://127.0.0.1:8080";
+			};
+			name = Debug;
+		};
+		2A94824C93507C963B9C39FA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				INFOPLIST_FILE = UNISTBusLiveActivity/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.UNISTBus.LiveActivity;
+				PRODUCT_NAME = UNISTBusLiveActivity;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		5C38E82806DD304EE3C95D41 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				INFOPLIST_FILE = UNISTBusLiveActivity/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.UNISTBus.LiveActivity;
+				PRODUCT_NAME = UNISTBusLiveActivity;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5F62582DEA466157D7864B18 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.UNISTBusTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/UNISTBus.app/UNISTBus";
+			};
+			name = Release;
+		};
+		67ED0B97205C86DAAC176F0A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.UNISTBusTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/UNISTBus.app/UNISTBus";
+			};
+			name = Debug;
+		};
+		6B37641134CADC1DA694F07A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				UNIST_BUS_API_BASE_URL = "https://unist-bus-api-60408467370.asia-northeast3.run.app";
+			};
+			name = Release;
+		};
+		AEAFE869509DC81E73CA2CB5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = UNISTBus/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.UNISTBus;
+				PRODUCT_NAME = UNISTBus;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		60FCDA1D31C76AACA04D313E /* Build configuration list for PBXNativeTarget "UNISTBusLiveActivity" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5C38E82806DD304EE3C95D41 /* Debug */,
+				2A94824C93507C963B9C39FA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		66A7B90894FE48BF98AB34F0 /* Build configuration list for PBXNativeTarget "UNISTBusTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				67ED0B97205C86DAAC176F0A /* Debug */,
+				5F62582DEA466157D7864B18 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		7B599E6A0F17B2EC4E20FA05 /* Build configuration list for PBXProject "UNISTBus" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				18D5347DBE86CDCBCDB7A43D /* Debug */,
+				6B37641134CADC1DA694F07A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C34F2A9869F48F8E7FDCFA65 /* Build configuration list for PBXNativeTarget "UNISTBus" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AEAFE869509DC81E73CA2CB5 /* Debug */,
+				094121F4B31547A359CAFE2D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B103D0EB94D29DB62BCBA71F /* Project object */;
+}

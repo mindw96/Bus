@@ -1,0 +1,146 @@
+openapi: 3.1.0
+info:
+  title: UNIST Bus API
+  version: 0.1.0
+  description: |
+    UNIST 핵심 정류장의 버스 도착 정보를 제공하는 API입니다.
+    모든 시간은 RFC 3339 절대 시각이며 모바일 앱은 ETA와 현재 시각의
+    차이로 남은 시간을 표시합니다.
+servers:
+  - url: http://127.0.0.1:8080
+    description: Local development
+paths:
+  /api/v1/stops/{stopId}/arrivals:
+    get:
+      operationId: getStopArrivals
+      summary: 정류장별 도착 정보 조회
+      parameters:
+        - name: stopId
+          in: path
+          required: true
+          description: 현재 지원하는 UNIST 정류장 번호
+          schema:
+            type: string
+            enum: ["40234", "40233", "40235"]
+      responses:
+        "200":
+          description: 정상 조회 또는 허용 범위 안의 stale 캐시
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              description: 항상 no-store
+            X-Data-Freshness:
+              schema:
+                $ref: "#/components/schemas/Freshness"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArrivalResponse"
+        "404":
+          description: 지원하지 않는 정류장
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "503":
+          description: 제공처 실패 후 사용할 수 있는 캐시도 없음
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+                example: 30
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+components:
+  schemas:
+    Freshness:
+      type: string
+      enum: [FRESH, STALE]
+    ArrivalStatus:
+      type: string
+      enum:
+        - SCHEDULED
+        - APPROACHING
+        - ARRIVING
+        - ARRIVED
+        - DELAYED
+        - CANCELLED
+        - UNKNOWN
+    Stop:
+      type: object
+      additionalProperties: false
+      required: [id, name]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+    Arrival:
+      type: object
+      additionalProperties: false
+      required:
+        - tripId
+        - routeId
+        - routeName
+        - destination
+        - scheduledArrivalAt
+        - estimatedArrivalAt
+        - observedAt
+        - staleAt
+        - status
+      properties:
+        tripId:
+          type: string
+        routeId:
+          type: string
+        routeName:
+          type: string
+        destination:
+          type: string
+        scheduledArrivalAt:
+          type: string
+          format: date-time
+        estimatedArrivalAt:
+          type: string
+          format: date-time
+        observedAt:
+          type: string
+          format: date-time
+        staleAt:
+          type: string
+          format: date-time
+        status:
+          $ref: "#/components/schemas/ArrivalStatus"
+    ArrivalResponse:
+      type: object
+      additionalProperties: false
+      required: [serverTime, freshness, stop, arrivals]
+      properties:
+        serverTime:
+          type: string
+          format: date-time
+        freshness:
+          $ref: "#/components/schemas/Freshness"
+        stop:
+          $ref: "#/components/schemas/Stop"
+        arrivals:
+          type: array
+          items:
+            $ref: "#/components/schemas/Arrival"
+    Problem:
+      type: object
+      additionalProperties: true
+      required: [type, title, status, detail]
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string

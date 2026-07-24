@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">UNIST Bus 테스트</string>
+    <string name="tracking_channel_name">버스 도착 추적</string>
+    <string name="tracking_channel_description">선택한 버스의 출발 또는 도착까지 남은 시간을 표시합니다.</string>
+    <string name="stop_tracking">추적 중단</string>
+</resources>

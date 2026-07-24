@@ -1,0 +1,20 @@
+package kr.ac.unist.bus.config
+
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.http.client.SimpleClientHttpRequestFactory
+import org.springframework.web.client.RestClient
+import java.time.Duration
+
+@Configuration(proxyBeanMethods = false)
+class HttpClientConfiguration {
+    @Bean
+    fun restClientBuilder(): RestClient.Builder {
+        val requestFactory = SimpleClientHttpRequestFactory().apply {
+            setConnectTimeout(Duration.ofSeconds(3))
+            setReadTimeout(Duration.ofSeconds(8))
+        }
+        return RestClient.builder()
+            .requestFactory(requestFactory)
+    }
+}

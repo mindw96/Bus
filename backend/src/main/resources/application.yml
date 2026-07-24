@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: unist-bus-backend
+
+server:
+  port: ${PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+unist-bus:
+  arrivals:
+    mode: ${UNIST_BUS_ARRIVALS_MODE:fixture}
+    cache-ttl: ${UNIST_BUS_CACHE_TTL:30s}
+    stale-after: 2m
+    max-stale-age: 10m
+    tago:
+      base-url: https://apis.data.go.kr/1613000/ArvlInfoInqireService
+      service-key: ${TAGO_SERVICE_KEY:}
+      city-code: ${TAGO_CITY_CODE:}
+      node-ids:
+        "40234": ${TAGO_NODE_40234:}
+        "40233": ${TAGO_NODE_40233:}
+        "40235": ${TAGO_NODE_40235:}

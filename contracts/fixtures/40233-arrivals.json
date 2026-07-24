@@ -1,0 +1,21 @@
+{
+  "serverTime": "2026-07-24T09:00:00Z",
+  "freshness": "FRESH",
+  "stop": {
+    "id": "40233",
+    "name": "울산과학기술원(기점)"
+  },
+  "arrivals": [
+    {
+      "tripId": "fixture-40233-713-1784873340",
+      "routeId": "fixture-route-713",
+      "routeName": "713",
+      "destination": "덕하 차고지",
+      "scheduledArrivalAt": "2026-07-24T09:11:00Z",
+      "estimatedArrivalAt": "2026-07-24T09:09:00Z",
+      "observedAt": "2026-07-24T09:00:00Z",
+      "staleAt": "2026-07-24T09:02:00Z",
+      "status": "APPROACHING"
+    }
+  ]
+}
