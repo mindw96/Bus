@@ -103,6 +103,8 @@ fun ArrivalsScreen(
             )
         },
     ) { innerPadding ->
+        val routeItems = mainRouteListItems(state.arrivals)
+
         LazyColumn(
             contentPadding = PaddingValues(
                 start = 16.dp,
@@ -117,15 +119,24 @@ fun ArrivalsScreen(
             }
 
             items(
-                items = state.arrivals,
-                key = { it.arrival.routeName },
-            ) { item ->
-                ArrivalCard(
-                    item = item,
-                    now = now,
-                    isTracking = state.trackedTripId == item.arrival.tripId,
-                    onToggleTracking = { onToggleTracking(item) },
-                )
+                items = routeItems,
+                key = MainRouteListItem::routeName,
+            ) { routeItem ->
+                val arrival = routeItem.arrival
+                if (arrival != null) {
+                    ArrivalCard(
+                        item = arrival,
+                        now = now,
+                        isTracking = state.trackedStopId == arrival.stop.id &&
+                            state.trackedRouteId == arrival.arrival.routeId,
+                        onToggleTracking = { onToggleTracking(arrival) },
+                    )
+                } else {
+                    MissingArrivalCard(
+                        routeName = routeItem.routeName,
+                        isChecking = state.isRefreshing || state.generatedAt == null,
+                    )
+                }
             }
         }
     }
@@ -188,6 +199,55 @@ private fun LiveDataHeader(
                     color = MaterialTheme.colorScheme.onSecondaryContainer,
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun MissingArrivalCard(
+    routeName: String,
+    isChecking: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val statusText = if (isChecking) {
+        "운행 정보 확인 중"
+    } else {
+        "현재 도착 정보 없음"
+    }
+
+    ElevatedCard(
+        modifier = modifier
+            .fillMaxWidth()
+            .semantics {
+                contentDescription = "$routeName 번, $statusText, 잠금화면 추적 불가"
+            },
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        ),
+    ) {
+        Column(
+            modifier = Modifier.padding(18.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            Text(
+                text = "${routeName}번",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+
+            Text(
+                text = statusText,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            Text(
+                text = "도착 예정 시간이 확인되면 잠금화면 추적을 시작할 수 있습니다.",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }

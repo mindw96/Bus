@@ -3,6 +3,14 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
+val firebaseEnabled = providers.gradleProperty("unistFirebaseEnabled")
+    .map { value -> value.toBooleanStrictOrNull() ?: false }
+    .getOrElse(false)
+
+if (firebaseEnabled) {
+    apply(plugin = "com.google.gms.google-services")
+}
+
 android {
     namespace = "kr.ac.unist.bus"
     compileSdk = 37
@@ -11,14 +19,16 @@ android {
         applicationId = "kr.ac.unist.bus"
         minSdk = 26
         targetSdk = 37
-        versionCode = 1
-        versionName = "0.2.0"
+        versionCode = 3
+        versionName = "0.3.1"
 
         buildConfigField(
             "String",
             "UNIST_BUS_API_BASE_URL",
             "\"https://unist-bus-api-60408467370.asia-northeast3.run.app\"",
         )
+        buildConfigField("boolean", "FCM_ENABLED", firebaseEnabled.toString())
+        manifestPlaceholders["fcmEnabled"] = firebaseEnabled.toString()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -67,7 +77,18 @@ dependencies {
     implementation("androidx.core:core:1.19.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.10.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0")
+    implementation("androidx.work:work-runtime:2.11.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
+
+    if (firebaseEnabled) {
+        implementation(platform("com.google.firebase:firebase-bom:34.16.0"))
+        implementation("com.google.firebase:firebase-messaging")
+    } else {
+        // Keep Firebase types available to the compiler while omitting the SDK
+        // from normal APKs until a matching google-services.json is supplied.
+        compileOnly(platform("com.google.firebase:firebase-bom:34.16.0"))
+        compileOnly("com.google.firebase:firebase-messaging")
+    }
 
     debugImplementation("androidx.compose.ui:ui-tooling")
 

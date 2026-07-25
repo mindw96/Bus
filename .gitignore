@@ -8,3 +8,9 @@ xcuserdata/
 android/.gradle/
 android/local.properties
 android/**/build/
+android/**/google-services.json
+
+# Push provider credentials must only be supplied through local secrets or
+# Google Secret Manager.
+*.p8
+firebase-service-account*.json

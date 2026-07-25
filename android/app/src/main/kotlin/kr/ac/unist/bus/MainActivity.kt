@@ -24,6 +24,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kr.ac.unist.bus.data.HttpArrivalRepository
 import kr.ac.unist.bus.model.StopArrival
 import kr.ac.unist.bus.notification.TrackingNotificationController
+import kr.ac.unist.bus.push.FcmRegistrationCoordinator
+import kr.ac.unist.bus.push.PushDependencies
 import kr.ac.unist.bus.ui.ArrivalsScreen
 import kr.ac.unist.bus.ui.ArrivalsViewModel
 import kr.ac.unist.bus.ui.theme.UNISTBusTheme
@@ -36,11 +38,20 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         val repository = HttpArrivalRepository(BuildConfig.UNIST_BUS_API_BASE_URL)
-        val notificationController = TrackingNotificationController(this)
+        val trackingStateStore = PushDependencies.stateStore(this)
+        val notificationController = TrackingNotificationController(this, trackingStateStore)
+        val subscriptionScheduler = PushDependencies.subscriptionScheduler(this)
+        if (BuildConfig.FCM_ENABLED) {
+            FcmRegistrationCoordinator.registerIfEnabled()
+        }
 
         setContent {
             val factory = remember {
-                ArrivalsViewModel.factory(repository, notificationController)
+                ArrivalsViewModel.factory(
+                    repository,
+                    notificationController,
+                    subscriptionScheduler,
+                )
             }
             val arrivalsViewModel: ArrivalsViewModel = viewModel(factory = factory)
             val state by arrivalsViewModel.uiState.collectAsState()
@@ -85,7 +96,10 @@ class MainActivity : ComponentActivity() {
                     snackbarHostState = snackbarHostState,
                     onRefresh = arrivalsViewModel::refresh,
                     onToggleTracking = { item ->
-                        if (state.trackedTripId == item.arrival.tripId) {
+                        if (
+                            state.trackedStopId == item.stop.id &&
+                            state.trackedRouteId == item.arrival.routeId
+                        ) {
                             arrivalsViewModel.stopTracking()
                         } else if (needsNotificationPermission()) {
                             pendingArrival = item

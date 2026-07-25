@@ -1,6 +1,6 @@
 # UNIST Bus 앱 — 로컬 Codex 프로젝트 인수인계서
 
-> 마지막 정리: 2026-07-22
+> 마지막 정리: 2026-07-24
 > 작업 환경: Apple Silicon M5 Pro MacBook Pro, 48GB RAM
 > 목적: 이 문서 하나만 읽고도 로컬 Codex가 프로젝트를 점검하고 첫 번째 동작 가능한 버전을 구현할 수 있게 한다.
 
@@ -38,9 +38,9 @@ Bus HeXA 웹사이트는 문제와 사용 흐름을 이해하기 위한 레퍼�
 | Android 잠금화면 | Android 16 QPR 계열/API 36.1+ Live Updates 우선, 이전 버전은 ongoing notification + chronometer |
 | 백엔드 | Kotlin, Spring Boot 4.1.x, Java 21 LTS, Gradle Kotlin DSL 및 Wrapper |
 | API | REST + OpenAPI 3.x, JSON, `/api/v1` 버저닝 |
-| DB | PostgreSQL 18 계열, Flyway, jOOQ |
-| 로컬 인프라 | Docker Desktop + Docker Compose |
-| 푸시 | APNs와 FCM. 첫 수직 기능 구현 후 도입 |
+| 추적 구독 저장소 | 1단계 운영은 Firestore Standard, 로컬·테스트는 메모리 구현 |
+| 로컬 인프라 | 기본 없음. 메모리 저장소와 fixture로 실행 |
+| 푸시 | ActivityKit APNs와 FCM data-only 메시지, 자격증명 기반 feature flag |
 | 구조 | 하나의 저장소, 모듈형 모놀리스 백엔드 |
 | 공유 코드 | 초기에는 KMP 미사용. 계약·규칙·테스트 fixture·디자인 토큰만 공유 |
 
@@ -49,7 +49,7 @@ Bus HeXA 웹사이트는 문제와 사용 흐름을 이해하기 위한 레퍼�
 - Compose Multiplatform UI 또는 공유 UI
 - Kotlin Multiplatform 공통 비즈니스 계층
 - 마이크로서비스, Kafka, GraphQL, WebSocket
-- 매분 푸시하는 방식
+- 남은 시간 표시를 위해 초 단위로 서버 푸시하는 방식
 - iOS/Android에서 공공데이터 API를 직접 호출하는 방식
 - 실제 키나 비밀값을 저장소에 넣는 방식
 
@@ -62,7 +62,7 @@ flowchart LR
     BIS[울산 BIS / 공공 교통 데이터] --> BE[Spring Boot 백엔드]
     TAGO[국토교통부 TAGO] --> BE
     CAL[휴일·학사·보정 데이터] --> BE
-    BE --> PG[(PostgreSQL)]
+    BE --> FS[(Firestore)]
     BE --> IOS[iOS 앱]
     BE --> AND[Android 앱]
     BE -. ETA 변경 푸시 .-> APNS[APNs]
@@ -74,6 +74,12 @@ flowchart LR
 ```
 
 백엔드는 외부 데이터 소스를 수집·정규화·캐시하고 앱에는 안정적인 자체 API만 제공한다. 앱은 서버가 내려준 절대 시각을 기준으로 남은 시간을 로컬에서 계산한다.
+
+초기 문서에서는 PostgreSQL/Flyway/jOOQ를 기준으로 잡았지만, UNIST 1단계의
+무료 Cloud Run scale-to-zero 운영에서는 Cloud SQL의 고정 비용과 연결 관리가
+과하다. 따라서 추적 구독은 저장소 인터페이스로 격리하고 운영 구현을
+Firestore Standard로 바꾼다. 메모리 구현은 로컬·테스트 전용이며, 서비스 규모가
+커지거나 관계형 질의가 필요해지면 PostgreSQL 구현을 추가한다.
 
 ## 5. 데이터 출처에 관한 현재 판단
 
@@ -206,18 +212,23 @@ GET /api/v1/stops/{stopId}/arrivals
 }
 ```
 
-후속 엔드포인트 후보:
+원격 잠금화면 갱신 엔드포인트:
 
 ```http
 GET    /api/v1/stops
 GET    /api/v1/routes
 GET    /api/v1/trips/{tripId}
-POST   /api/v1/subscriptions
-DELETE /api/v1/subscriptions/{subscriptionId}
-POST   /api/v1/devices
+PUT    /api/v1/tracking-subscriptions/{trackingSessionId}
+DELETE /api/v1/tracking-subscriptions/{trackingSessionId}
 ```
 
-오류 응답은 RFC 9457 Problem Details 형식 사용을 우선 검토한다. OpenAPI 문서를 계약의 단일 기준으로 삼고 두 앱의 모델 생성 또는 계약 테스트에 사용한다.
+`PUT`은 클라이언트가 만든 UUID를 idempotency key로 사용한다. Android FID 또는
+iOS Live Activity별 토큰이 회전해도 같은 세션을 갱신한다. 토큰은 응답이나
+로그에 포함하지 않는다.
+
+오류 응답은 RFC 9457 Problem Details 형식 사용을 우선 검토한다. 요청 body와
+응답을 포함한 OpenAPI 문서를 계약의 단일 기준으로 삼고 두 앱의 모델 생성 또는
+계약 테스트에 사용한다.
 
 ## 9. 최소 데이터 모델
 
@@ -253,19 +264,17 @@ arrival_snapshot
 - status
 - raw_payload_hash
 
-device
-- id
-- platform
-- push_token_encrypted
-- push_environment
-- updated_at
-
 tracking_subscription
-- id
-- device_id
-- trip_key
+- tracking_session_id
+- installation_id
+- platform
+- encrypted_push_target
+- push_environment
+- source_trip_id
 - stop_id
 - route_id
+- last_sent_estimated_arrival_at
+- last_sent_status
 - expires_at
 - state
 ```
@@ -318,22 +327,20 @@ tracking_subscription
 
 ## 12. 백엔드 구현 요구사항
 
-Spring Initializr 또는 동등한 방식으로 다음 의존성을 시작점으로 사용한다.
+현재 백엔드의 시작 의존성:
 
 - Spring Web
 - Validation
 - Actuator
-- jOOQ
-- PostgreSQL Driver
-- Flyway
-- Docker Compose Support
-- Testcontainers PostgreSQL
+- Firebase Admin SDK
+- Firestore 운영 adapter
 
 후속 연동 시 고려:
 
 - 외부 XML 응답이 있으면 Jackson XML
 - 재시도, rate limit, circuit breaker가 필요해지면 Resilience4j
 - APNs/FCM 어댑터는 `push` 기능 뒤의 인터페이스로 격리
+- PostgreSQL이 필요해지면 같은 추적 구독 저장소 port의 별도 구현으로 추가
 
 원칙:
 
@@ -345,7 +352,9 @@ Spring Initializr 또는 동등한 방식으로 다음 의존성을 시작점으
 - Actuator의 민감 엔드포인트를 외부에 무방비로 공개하지 않는다.
 - 로그에 API 키, 푸시 토큰, 전체 개인정보를 남기지 않는다.
 
-Docker Compose의 PostgreSQL 예시 기준은 `postgres:18.4-bookworm`이다. PostgreSQL 18 이미지는 볼륨 경로 변화가 있으므로 공식 이미지 설명에 따라 `/var/lib/postgresql`을 사용하고 실제 설치 시 다시 확인한다.
+Cloud Run은 응답이 끝난 뒤의 백그라운드 스레드나 로컬 파일을 영속 실행
+수단으로 사용하지 않는다. Cloud Scheduler가 인증된 worker 요청을 보내고,
+worker가 Firestore의 활성 구독을 조회해 TAGO 재조회와 변경 판정을 수행한다.
 
 ## 13. Mac 개발 환경 준비
 
@@ -387,16 +396,16 @@ docker compose version
 | 친구 테스트/운영 | `https://unist-bus-api-60408467370.asia-northeast3.run.app` |
 
 개발용 HTTP 예외는 Debug 설정으로 제한한다. 운영 앱은 HTTPS만 사용한다.
-Android 친구 테스트 APK는 `build/UNISTBus-0.2.0-live-debug.apk`이며, TAGO
-인증키를 포함하지 않고 위 HTTPS 백엔드에 연결한다.
+Android 친구 테스트 APK는 `build/UNISTBus-0.3.1-fcm-debug.apk`이며, TAGO
+인증키를 포함하지 않고 위 HTTPS 백엔드와 FCM 원격 갱신에 연결한다.
 
 ## 15. 첫 번째 수직 기능
 
 실제 BIS 연동 전에 아래 흐름을 끝까지 동작시킨다.
 
 1. 저장소와 세 플랫폼 프로젝트를 만들고 각 Wrapper/프로젝트 설정을 커밋한다.
-2. Docker Compose로 PostgreSQL을 실행한다.
-3. Flyway가 `stop`, `route`, `arrival_snapshot` 테이블과 UNIST 핵심 정류장 fixture 세 개를 만든다.
+2. 로컬에서는 추적 구독 메모리 저장소와 deterministic fixture를 사용한다.
+3. 운영에서는 Firestore에 만료 시각이 있는 추적 구독을 저장한다.
 4. 백엔드가 `GET /api/v1/stops/{stopId}/arrivals`를 제공한다.
 5. 테스트 모드에서는 `현재 시각 + 10분`인 ETA를 반환한다.
 6. iOS 앱에서 세 핵심 정류장의 다섯 노선을 한 목록으로 보여주고, 노선을 선택해 로컬 Live Activity를 시작한다.
@@ -410,13 +419,16 @@ Android 친구 테스트 APK는 `build/UNISTBus-0.2.0-live-debug.apk`이며, TAG
 1. 실제 울산 BIS/TAGO 계약과 약관 확인
 2. 수집기 및 정규화 계층 구현
 3. 캐시·stale 정책과 장애 대응
-4. APNs/FCM 원격 갱신
-5. 즐겨찾기와 홈 화면 위젯
-6. TestFlight/내부 Android 테스트 배포
+4. APNs/FCM 원격 갱신 코드와 구독 계약
+5. Apple APNs 자격증명 연결과 iOS 실제 기기 원격 Live Activity 검증
+6. 즐겨찾기와 홈 화면 위젯
+7. TestFlight/내부 Android 테스트 배포
 
 ## 16. 푸시와 갱신 정책
 
-매분 서버가 푸시하지 않는다. 서버는 절대 ETA를 보내고 OS가 로컬 카운트다운을 그린다.
+서버는 절대 ETA를 보내고 OS가 로컬 카운트다운을 그린다. Android는 의미 있는
+변화 중심으로 갱신하고, iOS는 ActivityKit freshness 유지를 위한 heartbeat만
+예외적으로 사용한다.
 
 푸시를 보낼 사건:
 
@@ -426,7 +438,11 @@ Android 친구 테스트 APK는 `build/UNISTBus-0.2.0-live-debug.apk`이며, TAG
 - 추적 종료
 - 데이터가 장시간 stale 상태로 전환됨
 
-정확한 임계값은 실제 데이터 변동성을 본 뒤 정한다. 초기 fixture에서는 60초 이상 ETA 변경을 예시 기준으로 사용할 수 있다.
+초기 기준은 마지막 성공 전송 ETA에서 누적 60초 이상 변했을 때다. 59초는
+보내지 않고, 상태 변경·stale 전환/회복·도착·취소·만료는 ETA 차이와 무관하게
+보낸다. iOS Live Activity는 ETA가 안정적이어도 정상 freshness가 만료되지
+않도록 기본 60초 heartbeat를 보낸다. 실제 TAGO 변동성을 관측한 뒤 설정값을
+조정한다.
 
 추적 구독에는 반드시 만료 시각을 둔다. 도착 후 또는 합리적인 최대 시간 이후 서버와 단말 양쪽에서 종료해 오래된 Live Activity/알림이 남지 않게 한다.
 
@@ -436,7 +452,7 @@ Android 친구 테스트 APK는 `build/UNISTBus-0.2.0-live-debug.apk`이며, TAG
 
 - 날짜·시간대·stale 판정 단위 테스트
 - 외부 payload → 내부 모델 매핑 테스트
-- Testcontainers PostgreSQL 통합 테스트
+- 추적 구독 저장소 계약 및 Firestore adapter 테스트
 - OpenAPI 계약 테스트
 - 외부 API timeout, malformed XML/JSON, rate limit, 중복 데이터 테스트
 
@@ -515,32 +531,34 @@ SDK나 권한 정책이 현재 버전에서 달라졌다면 공식 문서를 확
 
 ## 21. 첫 작업 세션 체크리스트
 
-- [ ] Git 저장소와 브랜치/변경 상태 확인
+- [x] Git 저장소와 브랜치/변경 상태 확인
 - [ ] Xcode, JDK 21, Android Studio SDK, Docker 확인
-- [ ] 최종 bundle identifier/applicationId 임시값 결정
-- [ ] 저장소 폴더 구조 생성
-- [ ] `contracts/openapi.yaml`에 arrivals API 작성
-- [ ] Spring Boot 프로젝트와 Gradle Wrapper 생성
-- [ ] `compose.yaml` 및 Flyway 초기 migration 작성
-- [ ] backend fixture API 테스트 통과
-- [ ] SwiftUI App + Live Activity Extension 생성 및 로컬 countdown 확인
-- [ ] Compose App + fallback notification 생성 및 countdown 확인
-- [ ] API 36.1+ Live Update 경로 확인
-- [ ] README에 실행 명령과 로컬 주소 기록
-- [ ] 실제 데이터 연동 전 남은 결정 사항 정리
+- [x] 최종 bundle identifier/applicationId 결정 (`kr.ac.unist.bus`)
+- [x] 저장소 폴더 구조 생성
+- [x] `contracts/openapi.yaml`에 arrivals·tracking API 작성
+- [x] Spring Boot 프로젝트와 Gradle Wrapper 생성
+- [x] 운영 Firestore 데이터베이스와 Scheduler 생성
+- [x] backend fixture/TAGO API 테스트 통과
+- [x] SwiftUI App + Live Activity Extension 생성 및 로컬 countdown 확인
+- [x] Compose App + fallback notification 생성 및 countdown 확인
+- [x] API 36.1+ Live Update 경로 확인
+- [x] README에 실행 명령과 로컬 주소 기록
+- [x] Android FCM 운영 푸시와 Firestore·Scheduler 연결
+- [x] iOS APNs 연결 전 남은 Apple Team·Key 입력 정리
 
 ## 22. 아직 결정해야 할 항목
 
-- 앱의 최종 이름과 bundle identifier/applicationId
-- 1차 지원 노선 범위
+- 스토어에 표시할 최종 앱 이름과 브랜드 자산
 - 울산 BIS/TAGO 중 실제 사용할 API, 승인 상태, 호출 한도, 라이선스
 - 로그·관측 도구와 운영 호스팅 제공자
 - 계정 없이 사용할지, 학교 인증을 넣을지
-- ETA 변경 푸시 임계값과 추적 만료 시간
 - 무료 개발 단계 이후 Apple Developer/Google Play Console 등록 시점
 - 디자인 브랜드 색상과 아이콘
 
-이 항목들은 첫 fixture 기반 수직 기능 구현을 막지 않는다. 식별자에는 나중에 바꾸기 쉬운 명시적 placeholder를 사용하고, Firebase/APNs 등록 전에는 최종 확정한다.
+이 항목들은 첫 fixture 기반 수직 기능 구현을 막지 않는다. 식별자는
+`kr.ac.unist.bus`로 확정했고 Firebase Android 앱, Firestore, FCM, Cloud Run,
+Cloud Scheduler까지 운영 연결했다. iOS APNs에는 Apple Team ID·Key ID·`.p8`가
+추가로 필요하다.
 
 ## 23. 공식 참고 문서
 
@@ -553,7 +571,8 @@ SDK나 권한 정책이 현재 버전에서 달라졌다면 공식 문서를 확
 - Firebase Cloud Messaging for Android: <https://firebase.google.com/docs/cloud-messaging/android/client>
 - Spring Boot: <https://spring.io/projects/spring-boot>
 - Spring Initializr: <https://start.spring.io/>
-- PostgreSQL Docker Official Image: <https://hub.docker.com/_/postgres>
+- Firestore: <https://firebase.google.com/docs/firestore>
+- Firebase Admin SDK: <https://firebase.google.com/docs/admin/setup>
 - 공공데이터포털: <https://www.data.go.kr/>
 
 ---

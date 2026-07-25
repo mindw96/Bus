@@ -26,7 +26,7 @@ final class ArrivalsStore {
 
     private(set) var state: LoadState
     private(set) var arrivals: [StopArrival]
-    private(set) var trackingTripID: String?
+    private(set) var trackingActivity: LiveActivityTrackingDescriptor?
     private(set) var unavailableStopIDs: Set<String>
     private(set) var notice: UserNotice?
 
@@ -50,9 +50,13 @@ final class ArrivalsStore {
             : (initialArrivals?.isEmpty == true ? .empty : .loaded)
     }
 
+    var trackingTripID: String? {
+        trackingActivity?.tripID
+    }
+
     var trackedArrival: StopArrival? {
-        guard let trackingTripID else { return nil }
-        return arrivals.first { $0.arrival.tripId == trackingTripID }
+        guard let trackingActivity else { return nil }
+        return arrivals.first(where: trackingActivity.matches)
     }
 
     var latestObservationAt: Date? {
@@ -61,6 +65,37 @@ final class ArrivalsStore {
 
     var hasPartialFailure: Bool {
         !unavailableStopIDs.isEmpty
+    }
+
+    var mainRouteArrivals: [MainRouteArrival] {
+        var availableByRoute: [MainBusRoute: StopArrival] = [:]
+
+        for item in arrivals {
+            guard let route = MainBusRoute(rawValue: item.arrival.routeName) else {
+                continue
+            }
+
+            if let existing = availableByRoute[route],
+               existing.arrival.estimatedArrivalAt <= item.arrival.estimatedArrivalAt {
+                continue
+            }
+            availableByRoute[route] = item
+        }
+
+        return MainBusRoute.allCases.map { route in
+            if let item = availableByRoute[route] {
+                return .available(route: route, item: item)
+            }
+            return .unavailable(route: route, reason: missingRouteReason)
+        }
+    }
+
+    func isTracking(_ item: StopArrival) -> Bool {
+        trackingActivity?.matches(item) == true
+    }
+
+    func resumeLiveActivityTracking() async {
+        await liveActivity.resume()
     }
 
     func load(
@@ -107,17 +142,20 @@ final class ArrivalsStore {
                 fallbackResponses: fallbackResponses
             )
             state = arrivals.isEmpty ? .empty : .loaded
-            trackingTripID = await liveActivity.activeTripID()
+            trackingActivity = await liveActivity.activeTracking()
 
             if let trackedArrival {
+                trackingActivity = trackingActivity?.updatingTripID(
+                    trackedArrival.arrival.tripId
+                )
                 await liveActivity.update(trackedArrival)
-            } else if trackingTripID != nil, result.failures.isEmpty {
+            } else if trackingActivity != nil, result.failures.isEmpty {
                 // An app/extension reinstall can leave an ActivityKit record whose
-                // rendered archive no longer exists. Remove it when its trip can no
-                // longer be reconciled with the latest arrivals instead of leaving
-                // an empty card on the Lock Screen.
+                // rendered archive no longer exists. Remove it when its route and
+                // stop can no longer be reconciled with the latest arrivals instead
+                // of leaving an empty card on the Lock Screen.
                 await liveActivity.end(nil, true)
-                trackingTripID = nil
+                trackingActivity = nil
             }
         } catch is CancellationError {
             return
@@ -136,10 +174,17 @@ final class ArrivalsStore {
         }
     }
 
-    func toggleTracking(_ item: StopArrival) async {
-        if trackingTripID == item.arrival.tripId {
+    func toggleTracking(_ routeArrival: MainRouteArrival) async {
+        guard let item = routeArrival.item else {
+            return
+        }
+        await toggleTracking(item)
+    }
+
+    private func toggleTracking(_ item: StopArrival) async {
+        if isTracking(item) {
             await liveActivity.end(item, true)
-            trackingTripID = nil
+            trackingActivity = nil
             notice = UserNotice(title: "추적을 종료했습니다", message: "잠금화면 표시를 정리했습니다.")
             return
         }
@@ -154,7 +199,7 @@ final class ArrivalsStore {
 
         do {
             try await liveActivity.start(item)
-            trackingTripID = item.arrival.tripId
+            trackingActivity = LiveActivityTrackingDescriptor(item: item)
             notice = UserNotice(
                 title: "잠금화면 추적을 시작했습니다",
                 message: "\(item.arrival.routeName)번 버스의 남은 시간이 자동으로 줄어듭니다."
@@ -203,7 +248,7 @@ final class ArrivalsStore {
         )
         arrivals[index] = updated
         await liveActivity.end(updated, false)
-        trackingTripID = nil
+        trackingActivity = nil
     }
 
     func dismissNotice() {
@@ -317,8 +362,21 @@ final class ArrivalsStore {
     }
 
     private var trackedArrivalIndex: Int? {
-        guard let trackingTripID else { return nil }
-        return arrivals.firstIndex { $0.arrival.tripId == trackingTripID }
+        guard let trackingActivity else { return nil }
+        return arrivals.firstIndex(where: trackingActivity.matches)
+    }
+
+    private var missingRouteReason: MainRouteUnavailableReason {
+        if hasPartialFailure {
+            return .checking
+        }
+
+        switch state {
+        case .loaded, .empty:
+            return .noCurrentArrival
+        case .idle, .loading, .failed:
+            return .checking
+        }
     }
 
     private func updateTrackedArrival(
@@ -327,6 +385,9 @@ final class ArrivalsStore {
         guard let index = trackedArrivalIndex else { return }
         let updated = transform(arrivals[index], clock.now())
         arrivals[index] = updated
+        trackingActivity = trackingActivity?.updatingTripID(
+            updated.arrival.tripId
+        )
         await liveActivity.update(updated)
     }
 }

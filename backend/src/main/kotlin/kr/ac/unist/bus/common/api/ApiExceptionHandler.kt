@@ -2,6 +2,8 @@ package kr.ac.unist.bus.common.api
 
 import kr.ac.unist.bus.arrival.application.ArrivalUnavailableException
 import kr.ac.unist.bus.stop.UnsupportedStopException
+import kr.ac.unist.bus.tracking.application.TrackingSubscriptionConflictException
+import kr.ac.unist.bus.tracking.application.TrackingSubscriptionValidationException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
@@ -12,6 +14,32 @@ import java.net.URI
 
 @RestControllerAdvice
 class ApiExceptionHandler {
+    @ExceptionHandler(TrackingSubscriptionValidationException::class)
+    fun invalidTracking(
+        exception: TrackingSubscriptionValidationException,
+    ): ResponseEntity<ProblemDetail> {
+        val problem = ProblemDetail.forStatusAndDetail(
+            HttpStatus.UNPROCESSABLE_ENTITY,
+            exception.message ?: "추적 요청이 올바르지 않습니다.",
+        )
+        problem.title = "추적 요청을 처리할 수 없습니다"
+        problem.type = URI.create("https://unist-bus.local/problems/invalid-tracking")
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(problem)
+    }
+
+    @ExceptionHandler(TrackingSubscriptionConflictException::class)
+    fun trackingConflict(
+        exception: TrackingSubscriptionConflictException,
+    ): ResponseEntity<ProblemDetail> {
+        val problem = ProblemDetail.forStatusAndDetail(
+            HttpStatus.CONFLICT,
+            exception.message ?: "추적 세션이 충돌했습니다.",
+        )
+        problem.title = "추적 세션 충돌"
+        problem.type = URI.create("https://unist-bus.local/problems/tracking-conflict")
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(problem)
+    }
+
     @ExceptionHandler(UnsupportedStopException::class)
     fun unsupportedStop(exception: UnsupportedStopException): ResponseEntity<ProblemDetail> {
         val problem = ProblemDetail.forStatusAndDetail(

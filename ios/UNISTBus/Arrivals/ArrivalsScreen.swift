@@ -83,11 +83,9 @@ struct ArrivalsScreen: View {
 
                 Spacer()
 
-                if store.state == .loaded {
-                    Text("\(store.arrivals.count)개 노선")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
+                Text("\(store.mainRouteArrivals.count)개 노선")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
             }
 
             Text(MainBusStop.allCases.map(\.id).joined(separator: " · "))
@@ -121,32 +119,24 @@ struct ArrivalsScreen: View {
 
     @ViewBuilder
     private func arrivalsContent(at now: Date) -> some View {
-        switch store.state {
-        case .idle, .loading:
-            Section("전체 도착 예정") {
-                LoadingArrivalRows()
-            }
-        case .loaded:
-            Section("전체 도착 예정") {
-                ForEach(store.arrivals) { item in
+        Section("주요 노선 도착 정보") {
+            ForEach(store.mainRouteArrivals) { routeArrival in
+                switch routeArrival {
+                case .available(_, let item):
                     ArrivalRow(
                         item: item,
                         now: now,
-                        isTracking: store.trackingTripID == item.arrival.tripId
+                        isTracking: store.isTracking(item)
                     ) {
-                        Task { await store.toggleTracking(item) }
+                        Task { await store.toggleTracking(routeArrival) }
                     }
+                case .unavailable(let route, let reason):
+                    UnavailableArrivalRow(route: route, reason: reason)
                 }
             }
-        case .empty:
-            Section {
-                ContentUnavailableView(
-                    "도착 예정 버스가 없습니다",
-                    systemImage: "bus",
-                    description: Text("잠시 후 다시 확인해 주세요.")
-                )
-            }
-        case .failed(let message):
+        }
+
+        if case .failed(let message) = store.state {
             Section {
                 ContentUnavailableView {
                     Label("도착 정보를 불러오지 못했습니다", systemImage: "wifi.exclamationmark")
@@ -163,25 +153,6 @@ struct ArrivalsScreen: View {
     }
 }
 
-private struct LoadingArrivalRows: View {
-    var body: some View {
-        ForEach(0..<5, id: \.self) { _ in
-            VStack(alignment: .leading, spacing: 10) {
-                RoundedRectangle(cornerRadius: 4)
-                    .frame(width: 72, height: 22)
-                RoundedRectangle(cornerRadius: 4)
-                    .frame(height: 16)
-                RoundedRectangle(cornerRadius: 8)
-                    .frame(height: 36)
-            }
-            .foregroundStyle(.quaternary)
-            .padding(.vertical, 8)
-            .redacted(reason: .placeholder)
-        }
-        .accessibilityLabel("도착 정보를 불러오는 중")
-    }
-}
-
 #if DEBUG
     #Preview("도착 목록") {
         NavigationStack {
@@ -191,8 +162,10 @@ private struct LoadingArrivalRows: View {
 
     #Preview("불러오는 중") {
         List {
-            Section("전체 도착 예정") {
-                LoadingArrivalRows()
+            Section("주요 노선 도착 정보") {
+                ForEach(MainBusRoute.allCases) { route in
+                    UnavailableArrivalRow(route: route, reason: .checking)
+                }
             }
         }
     }

@@ -5,7 +5,7 @@
 - `backend`에서 `./gradlew bootRun`으로 로컬 API를 실행합니다.
 - Xcode에서 `ios/UNISTBus.xcodeproj`를 엽니다.
 - `UNISTBus` scheme과 Dynamic Island를 지원하는 iPhone Simulator를 선택합니다.
-- 앱 target의 bundle identifier는 현재 `com.example.UNISTBus`인 임시값입니다.
+- 앱 target의 bundle identifier는 `kr.ac.unist.bus`입니다.
 - Simulator의 설정에서 UNIST Bus의 Live Activity가 허용되어 있는지 확인합니다.
 - 백엔드 없이 fixture를 확인할 때만 launch argument `-fixture-arrivals`를 사용합니다.
 
@@ -45,7 +45,13 @@
 
 ## 현재 의도된 제한
 
-- 로컬 백엔드와 TAGO adapter는 구현됐지만 실제 호출에는 공공데이터포털 인증키와 세 TAGO 정류소 ID 매핑이 필요합니다.
-- 현재 잠금화면 카운트다운은 마지막으로 받은 절대 ETA를 시스템이 초 단위로 감소시킵니다. 실제 교통 상황에 따른 ETA 보정에는 후속 ActivityKit APNs 연동이 필요합니다.
-- APNs 원격 갱신, App Group, 홈 화면 위젯은 아직 포함하지 않았습니다.
-- 앱이 완전히 종료된 뒤 로컬 코드만으로 ETA 변경이나 도착 종료를 전달할 수 없습니다. 이 부분은 후속 APNs 연동에서 완성합니다.
+- 운영 Cloud Run의 TAGO adapter와 세 정류소 매핑은 준비되어 있지만, 로컬
+  실제 호출에는 별도의 공공데이터포털 인증키가 필요합니다.
+- ActivityKit 원격 등록·토큰 회전·서버 APNs 전송 코드는 포함되어 있습니다.
+  최종 로컬 bundle identifier와 Push entitlement는 준비됐지만 기본 feature
+  flag가 `NO`이므로 현재 unsigned/Simulator 빌드에서는 로컬 Live Activity만
+  동작합니다.
+- 앱이 완전히 종료된 뒤 ETA 변경이나 도착 종료를 받으려면 Apple Developer
+  Team ID, APNs Key ID와 `.p8`, provisioning profile, 운영 백엔드·Scheduler
+  설정이 모두 필요합니다.
+- App Group과 홈 화면 위젯은 아직 포함하지 않았습니다.

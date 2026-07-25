@@ -98,3 +98,42 @@ struct ArrivalRow: View {
         }
     }
 }
+
+struct UnavailableArrivalRow: View {
+    let route: MainBusRoute
+    let reason: MainRouteUnavailableReason
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .firstTextBaseline, spacing: 4) {
+                Text(route.rawValue)
+                    .font(.title2.bold())
+                    .foregroundStyle(.primary)
+
+                Text("번")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+
+                Spacer()
+
+                Label(reason.title, systemImage: reason.systemImage)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.trailing)
+            }
+
+            Text(reason.detail)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+
+            Label("도착 정보가 있을 때 잠금화면 추적 가능", systemImage: "lock.slash")
+                .font(.footnote.weight(.medium))
+                .foregroundStyle(.tertiary)
+        }
+        .padding(.vertical, 6)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(
+            "\(route.rawValue)번, \(reason.title). \(reason.detail) 현재 잠금화면 추적을 시작할 수 없습니다."
+        )
+    }
+}

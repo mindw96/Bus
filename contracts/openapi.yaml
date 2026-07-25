@@ -1,12 +1,14 @@
 openapi: 3.1.0
 info:
   title: UNIST Bus API
-  version: 0.1.0
+  version: 0.3.0
   description: |
     UNIST 핵심 정류장의 버스 도착 정보를 제공하는 API입니다.
     모든 시간은 RFC 3339 절대 시각이며 모바일 앱은 ETA와 현재 시각의
     차이로 남은 시간을 표시합니다.
 servers:
+  - url: https://unist-bus-api-60408467370.asia-northeast3.run.app
+    description: Production
   - url: http://127.0.0.1:8080
     description: Local development
 paths:
@@ -54,7 +56,71 @@ paths:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
+  /api/v1/tracking-subscriptions/{trackingSessionId}:
+    parameters:
+      - $ref: "#/components/parameters/TrackingSessionId"
+    put:
+      operationId: upsertTrackingSubscription
+      summary: 잠금화면 원격 갱신 구독 등록 또는 갱신
+      description: |
+        클라이언트가 생성한 추적 세션 ID를 idempotency key로 사용합니다.
+        iOS Live Activity의 토큰 회전과 Android Firebase Installation ID
+        갱신도 같은 요청으로 처리합니다. `pushTarget`은 민감정보이므로
+        응답과 로그에 포함하지 않습니다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrackingSubscriptionUpsert"
+      responses:
+        "200":
+          description: 추적 구독 생성 또는 갱신
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrackingSubscription"
+        "400":
+          description: 형식이 잘못되었거나 허용 범위를 벗어난 요청
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          description: 지원하지 않는 정류장
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "409":
+          description: 같은 추적 세션을 다른 앱 설치가 이미 사용 중임
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "422":
+          description: 플랫폼과 푸시 대상 형식이 맞지 않거나 ETA·만료 시각이 유효하지 않음
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+    delete:
+      operationId: deleteTrackingSubscription
+      summary: 잠금화면 원격 갱신 구독 종료
+      description: 존재하지 않거나 이미 종료된 세션에도 성공하는 idempotent 요청입니다.
+      responses:
+        "204":
+          description: 추적 구독 종료
 components:
+  parameters:
+    TrackingSessionId:
+      name: trackingSessionId
+      in: path
+      required: true
+      description: 클라이언트가 생성한 추적 세션 UUID
+      schema:
+        type: string
+        format: uuid
   schemas:
     Freshness:
       type: string
@@ -130,6 +196,87 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Arrival"
+    PushPlatform:
+      type: string
+      enum: [ANDROID_FCM, IOS_LIVE_ACTIVITY]
+    PushEnvironment:
+      type: string
+      enum: [DEVELOPMENT, PRODUCTION]
+    TrackingSubscriptionState:
+      type: string
+      enum: [ACTIVE, ENDED, EXPIRED]
+    TrackingSubscriptionUpsert:
+      type: object
+      additionalProperties: false
+      required:
+        - installationId
+        - platform
+        - pushTarget
+        - pushEnvironment
+        - tripId
+        - routeId
+        - routeName
+        - stopId
+        - estimatedArrivalAt
+        - expiresAt
+      properties:
+        installationId:
+          type: string
+          minLength: 1
+          maxLength: 256
+          description: Android FID 또는 iOS 앱 설치 UUID
+        platform:
+          $ref: "#/components/schemas/PushPlatform"
+        pushTarget:
+          type: string
+          minLength: 1
+          maxLength: 4096
+          writeOnly: true
+          description: |
+            Android는 Firebase Installation ID(FID), iOS는 16바이트 이상의
+            짝수 길이 16진수 ActivityKit Live Activity 푸시 토큰입니다.
+        pushEnvironment:
+          $ref: "#/components/schemas/PushEnvironment"
+        tripId:
+          type: string
+          minLength: 1
+          maxLength: 256
+        routeId:
+          type: string
+          minLength: 1
+          maxLength: 256
+        routeName:
+          type: string
+          minLength: 1
+          maxLength: 64
+        stopId:
+          type: string
+          enum: ["40234", "40233", "40235"]
+        estimatedArrivalAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+          description: |
+            요청 상한입니다. 서버는 최초 ETA + 30분과 등록 시각 + 2시간 중
+            더 이른 시각으로 다시 제한할 수 있습니다.
+    TrackingSubscription:
+      type: object
+      additionalProperties: false
+      required: [trackingSessionId, state, updatedAt, expiresAt]
+      properties:
+        trackingSessionId:
+          type: string
+          format: uuid
+        state:
+          $ref: "#/components/schemas/TrackingSubscriptionState"
+        updatedAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
     Problem:
       type: object
       additionalProperties: true

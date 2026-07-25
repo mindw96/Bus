@@ -6,10 +6,15 @@ struct UNISTBusApp: App {
 
     init() {
         let configuration = AppConfiguration.current()
+        let liveActivityClient = LiveActivityClient.live(
+            remotePushEnabled: configuration.remoteLiveActivityEnabled,
+            pushEnvironment: configuration.pushEnvironment,
+            subscriptionClient: configuration.trackingSubscriptionClient
+        )
         _store = State(
             initialValue: ArrivalsStore(
                 client: configuration.arrivalClient,
-                liveActivity: .live,
+                liveActivity: liveActivityClient,
                 clock: .live,
                 cache: .live
             )
@@ -22,6 +27,9 @@ struct UNISTBusApp: App {
                 ArrivalsScreen(store: store)
             }
             .tint(.blue)
+            .task {
+                await store.resumeLiveActivityTracking()
+            }
         }
     }
 }

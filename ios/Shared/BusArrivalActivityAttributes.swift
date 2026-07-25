@@ -47,15 +47,41 @@ enum BusLiveActivityPhase: Equatable, Sendable {
 
 struct BusArrivalActivityAttributes: ActivityAttributes, Sendable {
     struct ContentState: Codable, Hashable, Sendable {
-        let estimatedArrivalAt: Date
-        let observedAt: Date
-        let staleAt: Date
+        let estimatedArrivalEpochSeconds: Int64
+        let observedAtEpochSeconds: Int64
+        let staleAtEpochSeconds: Int64
         let status: ArrivalStatus
+
+        init(
+            estimatedArrivalAt: Date,
+            observedAt: Date,
+            staleAt: Date,
+            status: ArrivalStatus
+        ) {
+            estimatedArrivalEpochSeconds = Int64(estimatedArrivalAt.timeIntervalSince1970)
+            observedAtEpochSeconds = Int64(observedAt.timeIntervalSince1970)
+            staleAtEpochSeconds = Int64(staleAt.timeIntervalSince1970)
+            self.status = status
+        }
+
+        var estimatedArrivalAt: Date {
+            Date(timeIntervalSince1970: TimeInterval(estimatedArrivalEpochSeconds))
+        }
+
+        var observedAt: Date {
+            Date(timeIntervalSince1970: TimeInterval(observedAtEpochSeconds))
+        }
+
+        var staleAt: Date {
+            Date(timeIntervalSince1970: TimeInterval(staleAtEpochSeconds))
+        }
     }
 
     let tripID: String
+    let routeID: String
     let routeName: String
     let destination: String
+    let stopID: String
     let stopName: String
     let countdownKind: BusCountdownKind
 }

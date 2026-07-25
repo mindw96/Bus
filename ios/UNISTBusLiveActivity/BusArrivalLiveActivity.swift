@@ -416,8 +416,10 @@ private extension BusArrivalActivityAttributes {
     static var arrivalPreview: BusArrivalActivityAttributes {
         BusArrivalActivityAttributes(
             tripID: "preview-trip-513",
+            routeID: "preview-route-513",
             routeName: "513",
             destination: "덕하 차고지",
+            stopID: "40234",
             stopName: "울산과학기술원",
             countdownKind: .arrival
         )
@@ -426,8 +428,10 @@ private extension BusArrivalActivityAttributes {
     static var departurePreview: BusArrivalActivityAttributes {
         BusArrivalActivityAttributes(
             tripID: "preview-trip-713",
+            routeID: "preview-route-713",
             routeName: "713",
             destination: "덕하 차고지",
+            stopID: "40233",
             stopName: "울산과학기술원(기점)",
             countdownKind: .departure
         )

@@ -11,6 +11,8 @@ final class AppConfigurationTests: XCTestCase {
         )
 
         XCTAssertEqual(configuration?.arrivalSource, .fixture)
+        XCTAssertEqual(configuration?.remoteLiveActivityEnabled, false)
+        XCTAssertEqual(configuration?.pushEnvironment, .development)
     }
 
     func testReleaseStyleResolutionIgnoresFixtureArgument() {
@@ -18,10 +20,14 @@ final class AppConfigurationTests: XCTestCase {
         let configuration = AppConfiguration.resolve(
             baseURLString: baseURL.absoluteString,
             arguments: ["UNISTBus", "-fixture-arrivals"],
-            allowsFixture: false
+            allowsFixture: false,
+            remoteLiveActivityEnabled: true,
+            pushEnvironmentString: "PRODUCTION"
         )
 
         XCTAssertEqual(configuration?.arrivalSource, .live(baseURL))
+        XCTAssertEqual(configuration?.remoteLiveActivityEnabled, true)
+        XCTAssertEqual(configuration?.pushEnvironment, .production)
     }
 
     func testInvalidBaseURLIsRejected() {
@@ -30,6 +36,17 @@ final class AppConfigurationTests: XCTestCase {
                 baseURLString: "not-a-url",
                 arguments: [],
                 allowsFixture: false
+            )
+        )
+    }
+
+    func testInvalidPushEnvironmentIsRejected() {
+        XCTAssertNil(
+            AppConfiguration.resolve(
+                baseURLString: "https://api.example.com",
+                arguments: [],
+                allowsFixture: false,
+                pushEnvironmentString: "UNKNOWN"
             )
         )
     }

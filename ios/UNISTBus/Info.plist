@@ -48,5 +48,9 @@
 	</array>
 	<key>UNISTBusAPIBaseURL</key>
 	<string>$(UNIST_BUS_API_BASE_URL)</string>
+	<key>UNISTBusPushEnvironment</key>
+	<string>$(UNIST_BUS_PUSH_ENVIRONMENT)</string>
+	<key>UNISTBusRemoteLiveActivityEnabled</key>
+	<string>$(UNIST_BUS_REMOTE_LIVE_ACTIVITY_ENABLED)</string>
 </dict>
 </plist>

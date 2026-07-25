@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		006C408BD4CFC5814CB6B251 /* BusArrivalActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C033BC722E8440C38DEECF5D /* BusArrivalActivityAttributes.swift */; };
+		01BE9DC19ECA4E49BF154C96 /* LiveActivityPushCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE4F0F60C7627B3F579CC30 /* LiveActivityPushCoordinator.swift */; };
 		232CAD462406E6ACD61702B6 /* ArrivalsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7168DE296765939667A75AD0 /* ArrivalsStore.swift */; };
 		319546EEF383C7B5E79BAC17 /* ArrivalClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF77F2A4F667F38BE615B862 /* ArrivalClient.swift */; };
 		36424D315F56F18FA69ABD07 /* ArrivalDecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2976540859AC08D063C1E27 /* ArrivalDecodingTests.swift */; };
@@ -26,6 +27,7 @@
 		B4291639F3BF1807F7B4DFF8 /* LiveActivityClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01B6789047DA5A7969077C6 /* LiveActivityClient.swift */; };
 		B73931236954B26916433779 /* ArrivalRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5584DC243156A2B42A53265F /* ArrivalRow.swift */; };
 		BB964E3FF47AC9625F3AD22A /* ArrivalCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28572A12D7DCD57F456D148 /* ArrivalCacheTests.swift */; };
+		BC899DD20BFF8B3546B37FC0 /* TrackingSubscriptionClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3838E18B17B1FCFA1AE337DD /* TrackingSubscriptionClient.swift */; };
 		BCE1C660B4037D19673DA18A /* BusArrivalLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 996898AC4AECF5B97D019A7E /* BusArrivalLiveActivity.swift */; };
 		C41D541EBDBCCE76DBF6CD16 /* StopArrival.swift in Sources */ = {isa = PBXBuildFile; fileRef = D18F42C308F3EA7EB68FF6F6 /* StopArrival.swift */; };
 		CA36D1BD4C4F792B3D4A07E4 /* ArrivalStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = EADBA3B951EC33A8C2C668C1 /* ArrivalStatus.swift */; };
@@ -33,7 +35,9 @@
 		CF2A2A7FEF552DF9FCBF6811 /* UNISTBusApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A53495F842704C3D8F47C04 /* UNISTBusApp.swift */; };
 		DD8C224028DB8519BF130621 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A11A04C749FAE7DB769B6573 /* WidgetKit.framework */; };
 		E01882342E331441E284C7E6 /* UNISTBusLiveActivity.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 33A6538A16DCA3CA22234E84 /* UNISTBusLiveActivity.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		E09E4A82A283FC953CCFCBFC /* TrackingSubscriptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F64686D8C64F1B7973B3BA /* TrackingSubscriptionTests.swift */; };
 		E2EEBC599B85113C51CDFED0 /* ArrivalsStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BD96828494EC844EEA0A076 /* ArrivalsStoreTests.swift */; };
+		F1F577FD01D30591ADB0B689 /* TrackingSubscriptionPersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061C7B6BFD86B4274A3F9CB2 /* TrackingSubscriptionPersistence.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,13 +72,18 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		061ABF79F6FE210786270E01 /* UNISTBus.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = UNISTBus.entitlements; sourceTree = "<group>"; };
+		061C7B6BFD86B4274A3F9CB2 /* TrackingSubscriptionPersistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingSubscriptionPersistence.swift; sourceTree = "<group>"; };
 		1A53495F842704C3D8F47C04 /* UNISTBusApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UNISTBusApp.swift; sourceTree = "<group>"; };
 		1BD96828494EC844EEA0A076 /* ArrivalsStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalsStoreTests.swift; sourceTree = "<group>"; };
 		238B0EB1160C6E8DAAD52F55 /* ArrivalsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalsScreen.swift; sourceTree = "<group>"; };
 		3085CCB0AC8DF9AC9F301679 /* MainBusStop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainBusStop.swift; sourceTree = "<group>"; };
 		3359CC18A380F995F069E217 /* AppConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfiguration.swift; sourceTree = "<group>"; };
 		33A6538A16DCA3CA22234E84 /* UNISTBusLiveActivity.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = UNISTBusLiveActivity.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		3838E18B17B1FCFA1AE337DD /* TrackingSubscriptionClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingSubscriptionClient.swift; sourceTree = "<group>"; };
 		5584DC243156A2B42A53265F /* ArrivalRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalRow.swift; sourceTree = "<group>"; };
+		5BE4F0F60C7627B3F579CC30 /* LiveActivityPushCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityPushCoordinator.swift; sourceTree = "<group>"; };
+		63F64686D8C64F1B7973B3BA /* TrackingSubscriptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingSubscriptionTests.swift; sourceTree = "<group>"; };
 		657316C1B2AE12CA8131270C /* UNISTBusTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = UNISTBusTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D0CE33A2935BCB86BF2FDB2 /* ArrivalPresentationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalPresentationTests.swift; sourceTree = "<group>"; };
 		7168DE296765939667A75AD0 /* ArrivalsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalsStore.swift; sourceTree = "<group>"; };
@@ -160,6 +169,7 @@
 		8DB141B8B1652AC3ED8140B5 /* UNISTBus */ = {
 			isa = PBXGroup;
 			children = (
+				061ABF79F6FE210786270E01 /* UNISTBus.entitlements */,
 				1A53495F842704C3D8F47C04 /* UNISTBusApp.swift */,
 				3DA894F1064A1CFDA11B7CD1 /* Arrivals */,
 				09364B7234FDDEC934301666 /* Config */,
@@ -198,6 +208,9 @@
 				CF77F2A4F667F38BE615B862 /* ArrivalClient.swift */,
 				758466BCE11DA62C004765DB /* DateProvider.swift */,
 				F01B6789047DA5A7969077C6 /* LiveActivityClient.swift */,
+				5BE4F0F60C7627B3F579CC30 /* LiveActivityPushCoordinator.swift */,
+				3838E18B17B1FCFA1AE337DD /* TrackingSubscriptionClient.swift */,
+				061C7B6BFD86B4274A3F9CB2 /* TrackingSubscriptionPersistence.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -219,6 +232,7 @@
 				A2976540859AC08D063C1E27 /* ArrivalDecodingTests.swift */,
 				6D0CE33A2935BCB86BF2FDB2 /* ArrivalPresentationTests.swift */,
 				1BD96828494EC844EEA0A076 /* ArrivalsStoreTests.swift */,
+				63F64686D8C64F1B7973B3BA /* TrackingSubscriptionTests.swift */,
 			);
 			path = UNISTBusTests;
 			sourceTree = "<group>";
@@ -341,8 +355,11 @@
 				95E331A49E93A5BC9F5F0880 /* BusArrivalActivityAttributes.swift in Sources */,
 				7FDCC6DC06CEEC98BD7C8BA3 /* DateProvider.swift in Sources */,
 				B4291639F3BF1807F7B4DFF8 /* LiveActivityClient.swift in Sources */,
+				01BE9DC19ECA4E49BF154C96 /* LiveActivityPushCoordinator.swift in Sources */,
 				74D670AB4DF7572699324C3B /* MainBusStop.swift in Sources */,
 				C41D541EBDBCCE76DBF6CD16 /* StopArrival.swift in Sources */,
+				BC899DD20BFF8B3546B37FC0 /* TrackingSubscriptionClient.swift in Sources */,
+				F1F577FD01D30591ADB0B689 /* TrackingSubscriptionPersistence.swift in Sources */,
 				CF2A2A7FEF552DF9FCBF6811 /* UNISTBusApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -356,6 +373,7 @@
 				36424D315F56F18FA69ABD07 /* ArrivalDecodingTests.swift in Sources */,
 				6620BABF31EC34BD044AFD73 /* ArrivalPresentationTests.swift in Sources */,
 				E2EEBC599B85113C51CDFED0 /* ArrivalsStoreTests.swift in Sources */,
+				E09E4A82A283FC953CCFCBFC /* TrackingSubscriptionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -379,13 +397,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = UNISTBus/UNISTBus.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = UNISTBus/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.UNISTBus;
+				PRODUCT_BUNDLE_IDENTIFIER = kr.ac.unist.bus;
 				PRODUCT_NAME = UNISTBus;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -426,7 +445,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -445,7 +464,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.3.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -456,6 +475,9 @@
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				UNIST_BUS_API_BASE_URL = "http://127.0.0.1:8080";
+				UNIST_BUS_APNS_ENVIRONMENT = development;
+				UNIST_BUS_PUSH_ENVIRONMENT = DEVELOPMENT;
+				UNIST_BUS_REMOTE_LIVE_ACTIVITY_ENABLED = NO;
 			};
 			name = Debug;
 		};
@@ -469,7 +491,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.UNISTBus.LiveActivity;
+				PRODUCT_BUNDLE_IDENTIFIER = kr.ac.unist.bus.LiveActivity;
 				PRODUCT_NAME = UNISTBusLiveActivity;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -487,7 +509,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.UNISTBus.LiveActivity;
+				PRODUCT_BUNDLE_IDENTIFIER = kr.ac.unist.bus.LiveActivity;
 				PRODUCT_NAME = UNISTBusLiveActivity;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -505,7 +527,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.UNISTBusTests;
+				PRODUCT_BUNDLE_IDENTIFIER = kr.ac.unist.busTests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/UNISTBus.app/UNISTBus";
@@ -522,7 +544,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.UNISTBusTests;
+				PRODUCT_BUNDLE_IDENTIFIER = kr.ac.unist.busTests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/UNISTBus.app/UNISTBus";
@@ -563,7 +585,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -576,7 +598,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.3.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -586,6 +608,9 @@
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				UNIST_BUS_API_BASE_URL = "https://unist-bus-api-60408467370.asia-northeast3.run.app";
+				UNIST_BUS_APNS_ENVIRONMENT = production;
+				UNIST_BUS_PUSH_ENVIRONMENT = PRODUCTION;
+				UNIST_BUS_REMOTE_LIVE_ACTIVITY_ENABLED = NO;
 			};
 			name = Release;
 		};
@@ -593,13 +618,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = UNISTBus/UNISTBus.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = UNISTBus/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.UNISTBus;
+				PRODUCT_BUNDLE_IDENTIFIER = kr.ac.unist.bus;
 				PRODUCT_NAME = UNISTBus;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";

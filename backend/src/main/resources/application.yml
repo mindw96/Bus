@@ -12,6 +12,29 @@ management:
         include: health,info
 
 unist-bus:
+  tracking:
+    storage: ${UNIST_BUS_TRACKING_STORAGE:memory}
+    encryption-key-base64: ${UNIST_BUS_TRACKING_ENCRYPTION_KEY:}
+    firestore-collection: ${UNIST_BUS_TRACKING_COLLECTION:tracking-subscriptions}
+  push:
+    enabled: ${UNIST_BUS_PUSH_ENABLED:false}
+    refresh-key: ${UNIST_BUS_PUSH_REFRESH_KEY:}
+    eta-change-threshold: ${UNIST_BUS_PUSH_ETA_THRESHOLD:60s}
+    match-window: ${UNIST_BUS_PUSH_MATCH_WINDOW:3m}
+    ios-heartbeat-interval: ${UNIST_BUS_PUSH_IOS_HEARTBEAT:60s}
+    delivery-claim-lease: ${UNIST_BUS_PUSH_CLAIM_LEASE:30s}
+    max-subscription-lifetime: ${UNIST_BUS_PUSH_MAX_LIFETIME:2h}
+    arrival-grace-period: ${UNIST_BUS_PUSH_ARRIVAL_GRACE:30m}
+    firebase:
+      project-id: ${FIREBASE_PROJECT_ID:}
+    fcm:
+      enabled: ${UNIST_BUS_FCM_ENABLED:false}
+    apns:
+      enabled: ${UNIST_BUS_APNS_ENABLED:false}
+      key-id: ${APNS_KEY_ID:}
+      team-id: ${APNS_TEAM_ID:}
+      bundle-id: ${APNS_BUNDLE_ID:}
+      auth-key: ${APNS_AUTH_KEY:}
   arrivals:
     mode: ${UNIST_BUS_ARRIVALS_MODE:fixture}
     cache-ttl: ${UNIST_BUS_CACHE_TTL:30s}

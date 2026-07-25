@@ -22,6 +22,32 @@ final class ArrivalsStoreTests: XCTestCase {
         XCTAssertEqual(MainBusStop.terminus.countdownKind.imminentTitle, "곧 도착")
     }
 
+    func testLiveActivityTrackingDescriptorMatchesRouteAndStopAcrossTripIDs() {
+        let now = Date(timeIntervalSince1970: 1_784_678_400)
+        let original = StopArrival(
+            stop: MainBusStop.campus.summary,
+            arrival: makeArrival(route: "513", minutes: 7, now: now)
+        )
+        let changedBucket = StopArrival(
+            stop: MainBusStop.campus.summary,
+            arrival: makeArrival(route: "513", minutes: 8, now: now)
+        )
+        let differentStop = StopArrival(
+            stop: MainBusStop.origin.summary,
+            arrival: changedBucket.arrival
+        )
+        let differentRoute = StopArrival(
+            stop: MainBusStop.campus.summary,
+            arrival: makeArrival(route: "713", minutes: 8, now: now)
+        )
+        let descriptor = LiveActivityTrackingDescriptor(item: original)
+
+        XCTAssertNotEqual(original.arrival.tripId, changedBucket.arrival.tripId)
+        XCTAssertTrue(descriptor.matches(changedBucket))
+        XCTAssertFalse(descriptor.matches(differentStop))
+        XCTAssertFalse(descriptor.matches(differentRoute))
+    }
+
     func testLiveActivityTerminalStateTakesPriorityOverStaleData() {
         let now = Date(timeIntervalSince1970: 1_784_678_400)
         let arrived = makeContentState(status: .arrived, eta: now, now: now)
@@ -95,6 +121,122 @@ final class ArrivalsStoreTests: XCTestCase {
         )
         XCTAssertEqual(store.arrivals.map(\.arrival.routeName), ["513", "713", "743", "753", "1115"])
         XCTAssertEqual(store.arrivals.count, 5)
+        XCTAssertEqual(
+            store.mainRouteArrivals.map(\.route),
+            MainBusRoute.allCases
+        )
+        XCTAssertTrue(store.mainRouteArrivals.allSatisfy { $0.item != nil })
+    }
+
+    func testEmptyResponsesStillShowFiveRoutesWithoutTrackingActions() async {
+        let now = Date(timeIntervalSince1970: 1_784_678_400)
+        let probe = LiveActivityProbe(activeTracking: nil)
+        let client = ArrivalClient { stopID in
+            let stop = try XCTUnwrap(MainBusStop(rawValue: stopID))
+            return ArrivalResponse(stop: stop.summary, arrivals: [])
+        }
+        let store = ArrivalsStore(
+            client: client,
+            liveActivity: probe.client,
+            clock: .constant(now)
+        )
+
+        await store.load()
+        let rows = store.mainRouteArrivals
+        await store.toggleTracking(rows[0])
+        let startedCount = await probe.startedCount()
+
+        XCTAssertEqual(store.state, .empty)
+        XCTAssertEqual(rows.map(\.route), MainBusRoute.allCases)
+        XCTAssertEqual(rows.count, 5)
+        XCTAssertTrue(rows.allSatisfy {
+            if case .unavailable(_, .noCurrentArrival) = $0 {
+                return true
+            }
+            return false
+        })
+        XCTAssertEqual(startedCount, 0)
+    }
+
+    func testActualArrivalReplacesOnlyItsMatchingRoutePlaceholder() async {
+        let now = Date(timeIntervalSince1970: 1_784_678_400)
+        let liveArrival = StopArrival(
+            stop: MainBusStop.campus.summary,
+            arrival: makeArrival(route: "513", minutes: 7, now: now)
+        )
+        let store = ArrivalsStore(
+            client: .fixture(clock: .constant(now), delay: nil),
+            liveActivity: .disabled,
+            clock: .constant(now),
+            initialArrivals: [liveArrival]
+        )
+
+        let rows = store.mainRouteArrivals
+
+        XCTAssertEqual(rows.count, 5)
+        XCTAssertEqual(rows.first?.item, liveArrival)
+        XCTAssertEqual(
+            rows.dropFirst().map(\.route),
+            [.route713, .route743, .route753, .route1115]
+        )
+        XCTAssertTrue(rows.dropFirst().allSatisfy {
+            if case .unavailable(_, .noCurrentArrival) = $0 {
+                return true
+            }
+            return false
+        })
+    }
+
+    func testUnavailableRoutesUseCheckingStateDuringPartialFailure() async {
+        let now = Date(timeIntervalSince1970: 1_784_678_400)
+        let campusArrival = makeArrival(route: "513", minutes: 7, now: now)
+        let client = ArrivalClient { stopID in
+            guard stopID != MainBusStop.origin.id else {
+                throw TestArrivalError.unavailable
+            }
+            let stop = try XCTUnwrap(MainBusStop(rawValue: stopID))
+            let arrivals = stop == .campus
+                ? [campusArrival]
+                : []
+            return ArrivalResponse(stop: stop.summary, arrivals: arrivals)
+        }
+        let store = ArrivalsStore(
+            client: client,
+            liveActivity: .disabled,
+            clock: .constant(now)
+        )
+
+        await store.load()
+        let missingRows = store.mainRouteArrivals.filter { $0.item == nil }
+
+        XCTAssertEqual(store.state, .loaded)
+        XCTAssertEqual(missingRows.count, 4)
+        XCTAssertTrue(missingRows.allSatisfy {
+            if case .unavailable(_, .checking) = $0 {
+                return true
+            }
+            return false
+        })
+    }
+
+    func testActualRouteCanStartTracking() async {
+        let now = Date(timeIntervalSince1970: 1_784_678_400)
+        let probe = LiveActivityProbe(activeTracking: nil)
+        let item = StopArrival(
+            stop: MainBusStop.campus.summary,
+            arrival: makeArrival(route: "513", minutes: 7, now: now)
+        )
+        let store = ArrivalsStore(
+            client: .fixture(clock: .constant(now), delay: nil),
+            liveActivity: probe.client,
+            clock: .constant(now),
+            initialArrivals: [item]
+        )
+
+        await store.toggleTracking(store.mainRouteArrivals[0])
+        let startedCount = await probe.startedCount()
+
+        XCTAssertEqual(startedCount, 1)
     }
 
     func testLoadKeepsSuccessfulStopsWhenOneStopFails() async {
@@ -121,7 +263,13 @@ final class ArrivalsStoreTests: XCTestCase {
 
     func testPartialFailureDoesNotRemoveAnUnreconciledLiveActivity() async {
         let now = Date(timeIntervalSince1970: 1_784_678_400)
-        let probe = LiveActivityProbe(activeTripID: "fixture-40233-trip-713")
+        let probe = LiveActivityProbe(
+            activeTracking: LiveActivityTrackingDescriptor(
+                tripID: "fixture-40233-trip-713",
+                routeID: "fixture-route-713",
+                stopID: MainBusStop.origin.id
+            )
+        )
         let fixture = ArrivalClient.fixture(clock: .constant(now), delay: nil)
         let client = ArrivalClient { stopID in
             if stopID == MainBusStop.origin.id {
@@ -144,7 +292,37 @@ final class ArrivalsStoreTests: XCTestCase {
 
     func testLoadRefreshesActiveLiveActivityWhenTripStillExists() async {
         let now = Date(timeIntervalSince1970: 1_784_678_400)
-        let probe = LiveActivityProbe(activeTripID: "fixture-40234-trip-513")
+        let probe = LiveActivityProbe(
+            activeTracking: LiveActivityTrackingDescriptor(
+                tripID: "fixture-40234-trip-513",
+                routeID: "fixture-route-513",
+                stopID: MainBusStop.campus.id
+            )
+        )
+        let store = ArrivalsStore(
+            client: .fixture(clock: .constant(now), delay: nil),
+            liveActivity: probe.client,
+            clock: .constant(now)
+        )
+
+        await store.load()
+        let updatedTripID = await probe.updatedTripID()
+        let endedAllImmediately = await probe.endedAllImmediately()
+
+        XCTAssertEqual(store.trackingTripID, "fixture-40234-trip-513")
+        XCTAssertEqual(updatedTripID, "fixture-40234-trip-513")
+        XCTAssertFalse(endedAllImmediately)
+    }
+
+    func testLoadKeepsTrackingWhenTagoTripBucketChanges() async {
+        let now = Date(timeIntervalSince1970: 1_784_678_400)
+        let probe = LiveActivityProbe(
+            activeTracking: LiveActivityTrackingDescriptor(
+                tripID: "tago-40234-route-513-old-bucket",
+                routeID: "fixture-route-513",
+                stopID: MainBusStop.campus.id
+            )
+        )
         let store = ArrivalsStore(
             client: .fixture(clock: .constant(now), delay: nil),
             liveActivity: probe.client,
@@ -162,7 +340,13 @@ final class ArrivalsStoreTests: XCTestCase {
 
     func testLoadRemovesOrphanedLiveActivity() async {
         let now = Date(timeIntervalSince1970: 1_784_678_400)
-        let probe = LiveActivityProbe(activeTripID: "missing-trip")
+        let probe = LiveActivityProbe(
+            activeTracking: LiveActivityTrackingDescriptor(
+                tripID: "missing-trip",
+                routeID: "missing-route",
+                stopID: MainBusStop.campus.id
+            )
+        )
         let store = ArrivalsStore(
             client: .fixture(clock: .constant(now), delay: nil),
             liveActivity: probe.client,
@@ -282,32 +466,38 @@ private actor RequestedStops {
 }
 
 private actor LiveActivityProbe {
-    private let activeID: String?
+    private let activeDescriptor: LiveActivityTrackingDescriptor?
     private var updatedID: String?
     private var removedOrphan = false
+    private var starts = 0
 
-    init(activeTripID: String?) {
-        activeID = activeTripID
+    init(activeTracking: LiveActivityTrackingDescriptor?) {
+        activeDescriptor = activeTracking
     }
 
     nonisolated var client: LiveActivityClient {
         LiveActivityClient(
             isEnabled: { true },
-            activeTripID: { await self.activeTripID() },
-            start: { _ in },
+            activeTracking: { await self.activeTracking() },
+            start: { item in await self.recordStart(item) },
             update: { item in await self.recordUpdate(item) },
             end: { item, immediately in
                 await self.recordEnd(item: item, immediately: immediately)
-            }
+            },
+            resume: {}
         )
     }
 
-    func activeTripID() -> String? {
-        activeID
+    func activeTracking() -> LiveActivityTrackingDescriptor? {
+        activeDescriptor
     }
 
     func recordUpdate(_ item: StopArrival) {
         updatedID = item.arrival.tripId
+    }
+
+    func recordStart(_: StopArrival) {
+        starts += 1
     }
 
     func recordEnd(item: StopArrival?, immediately: Bool) {
@@ -320,5 +510,9 @@ private actor LiveActivityProbe {
 
     func endedAllImmediately() -> Bool {
         removedOrphan
+    }
+
+    func startedCount() -> Int {
+        starts
     }
 }
