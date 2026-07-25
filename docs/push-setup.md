@@ -2,8 +2,9 @@
 
 앱과 백엔드의 원격 갱신 코드는 자격증명이 없는 로컬 개발 환경에서도
 빌드되도록 기본 비활성화되어 있습니다. 운영 환경은 Firestore, Firebase,
-Android FCM, Cloud Run, Cloud Scheduler 연결을 완료했습니다. iOS APNs만
-Apple Team과 키가 준비될 때까지 비활성 상태입니다.
+Android FCM, Cloud Run, Cloud Scheduler 연결을 완료했습니다. iOS는 Apple
+식별자·Sandbox APNs 키·개발용 서명까지 준비했으며, 별도 Sandbox 스킴에서만
+원격 Live Activity를 켭니다.
 
 ## 구현된 데이터 흐름
 
@@ -30,7 +31,7 @@ Apple Team과 키가 준비될 때까지 비활성 상태입니다.
 | 백엔드 추적 저장소 | `memory` | 로컬·테스트 전용, 재시작 시 삭제 |
 | 백엔드 push worker | `false` | worker 엔드포인트와 전송 비활성 |
 | Android FCM | Gradle property 없음 | Firebase SDK와 서비스 비활성 |
-| iOS 원격 Live Activity | `NO` | 로컬 Live Activity만 사용 |
+| iOS 원격 Live Activity | 일반 Debug·Release `NO`, Sandbox 스킴 `YES` | 실기기 APNs 시험만 명시적으로 활성 |
 
 이 기본값에서는 기존 도착 조회와 로컬 카운트다운이 그대로 동작합니다.
 
@@ -60,10 +61,16 @@ notification payload가 아닌 data-only payload를 사용하며, 앱은 같은 
 - 앱 bundle identifier: `kr.ac.unist.bus`
 - Live Activity extension: `kr.ac.unist.bus.LiveActivity`
 - 테스트 bundle: `kr.ac.unist.busTests`
-- 앱 target의 `aps-environment` entitlement: Debug `development`, Release
-  `production`
+- Apple Team: `4J7HGK26PF`
+- Developer portal: 두 App ID 등록 완료, 메인 앱의 Push Notifications 활성
+- 앱 target의 `aps-environment` entitlement: Debug·Sandbox `development`,
+  Release `production`
 - 앱 target의 `CODE_SIGN_ENTITLEMENTS`: `UNISTBus/UNISTBus.entitlements`
-- 원격 Live Activity feature flag: Debug·Release 모두 `NO`
+- 원격 Live Activity feature flag: Debug·Release `NO`,
+  `DebugAPNsSandbox`만 `YES`
+- `UNISTBusAPNsSandbox` 스킴: 운영 Cloud Run API + Sandbox APNs 개발 환경
+- Live Activity 60초 heartbeat를 위한 frequent updates 지원
+- Apple Development 인증서와 두 target의 provisioning profile 생성 완료
 
 따라서 Apple 계정이 없는 환경에서도 아래 unsigned Simulator 빌드는 계속
 가능합니다.
@@ -80,17 +87,25 @@ xcodebuild \
   build-for-testing
 ```
 
-실제 원격 Live Activity를 켜기 위해 남은 외부 입력과 작업은 다음과 같습니다.
+Sandbox 원격 Live Activity 실기기 빌드는 다음처럼 검증합니다.
 
-1. Apple Developer Program의 **Team ID**를 준비하고 Xcode signing team으로 선택
-2. Developer portal에 `kr.ac.unist.bus` App ID를 등록하고 Push Notifications
-   capability 및 provisioning profile 준비
-3. ActivityKit 원격 갱신 권한을 포함한 APNs Auth Key(`.p8`)를 발급하고
-   **Key ID**와 파일 내용을 안전하게 보관
-4. Cloud Run Secret Manager에 Team ID, Key ID, `.p8` 내용을 주입하고
-   `APNS_BUNDLE_ID=kr.ac.unist.bus`로 설정
-5. 실제 기기에서 APNs 왕복을 검증한 뒤에만
-   `UNIST_BUS_REMOTE_LIVE_ACTIVITY_ENABLED=YES`로 전환
+```bash
+cd ios
+xcodegen generate
+xcodebuild \
+  -project UNISTBus.xcodeproj \
+  -scheme UNISTBusAPNsSandbox \
+  -configuration DebugAPNsSandbox \
+  -destination 'generic/platform=iOS' \
+  -allowProvisioningUpdates \
+  build
+```
+
+Xcode에서 실제 시험할 때는 `UNISTBusAPNsSandbox` 스킴과 연결된 iPhone을
+선택하여 실행합니다. 앱에서 실제 도착 정보가 있는 노선의 추적을 시작하고
+화면을 잠근 뒤, ETA 변화가 Cloud Run worker를 통해 반영되는지 확인합니다.
+일반 `UNISTBus` 스킴과 Release는 실제 기기 왕복 검증이 끝날 때까지 원격
+기능을 계속 비활성으로 유지합니다.
 
 원격 기능을 켜면 앱은 `pushType: .token`으로 Live Activity를 시작하고, 해당
 Activity의 토큰이 바뀔 때마다 같은 추적 세션을 idempotent하게 갱신합니다.
@@ -118,9 +133,14 @@ APNS_KEY_ID=<Apple key id>
 APNS_TEAM_ID=<Apple team id>
 APNS_BUNDLE_ID=kr.ac.unist.bus
 APNS_AUTH_KEY=<the .p8 content>
+APNS_ALLOWED_ENVIRONMENT=DEVELOPMENT
 ```
 
 - 실제 값은 Cloud Run Secret Manager 참조로 주입합니다.
+- `APNS_ALLOWED_ENVIRONMENT`는 Apple Developer에서 해당 키에 지정한 환경과
+  반드시 같아야 합니다. 기본값은 안전한 Sandbox용 `DEVELOPMENT`이며, 이때
+  `PRODUCTION` 구독은 APNs 요청을 보내기 전에 차단됩니다. Production 전용
+  키로 교체할 때만 `PRODUCTION`으로 명시적으로 변경합니다.
 - Firebase Admin은 Cloud Run 서비스 계정의 Application Default Credentials를
   사용하며 서비스 계정 JSON 파일을 배포하지 않습니다.
 - Firestore에는 푸시 대상을 AES-GCM 암호문으로 저장하고, Android 설치
@@ -162,8 +182,14 @@ IAM 호출 권한으로 보호하는 구성을 권장합니다.
 - Firestore `(default)`: 서울 `asia-northeast3`, Native mode, TTL
   `tracking-subscriptions.expiresAt` 활성
 - Firebase Android 앱: `kr.ac.unist.bus.debug`, `kr.ac.unist.bus`
-- Cloud Run: Firestore 저장과 FCM worker 활성, APNs 비활성
+- Apple App ID: `kr.ac.unist.bus`, `kr.ac.unist.bus.LiveActivity` 등록
+- 메인 Apple App ID: Push Notifications 활성
+- APNs Auth Key: Sandbox, Team Scoped, Secret Manager 버전 참조
+- Cloud Run: Firestore 저장, FCM worker, APNs Sandbox gateway 활성
+- Cloud Run APNs 가드: `DEVELOPMENT`만 허용, `PRODUCTION` 전송 차단
 - Cloud Scheduler: `unist-bus-push-refresh`, 매분, `Asia/Seoul`
 
-남은 외부 작업은 Apple Developer App ID·capability·provisioning profile과
-APNs Team ID·Key ID·`.p8` 연결 및 실제 iPhone 왕복 검증입니다.
+남은 외부 검증은 연결된 실제 iPhone에서 `UNISTBusAPNsSandbox` 스킴을 실행하고
+Live Activity 토큰 등록부터 Cloud Run worker의 APNs 갱신까지 왕복을 확인하는
+작업입니다. TestFlight·App Store 배포 전에는 별도의 Production APNs 키를
+준비하고 `APNS_ALLOWED_ENVIRONMENT=PRODUCTION`으로 명시적으로 전환합니다.

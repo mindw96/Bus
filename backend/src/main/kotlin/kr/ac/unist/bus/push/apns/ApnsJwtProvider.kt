@@ -13,6 +13,10 @@ import java.time.Duration
 import java.time.Instant
 import java.util.Base64
 
+fun interface ApnsAuthorizationTokenProvider {
+    fun token(): String
+}
+
 @Component
 @ConditionalOnProperty(
     prefix = "unist-bus.push.apns",
@@ -22,14 +26,14 @@ import java.util.Base64
 class ApnsJwtProvider(
     properties: PushProperties,
     private val clock: Clock,
-) {
+) : ApnsAuthorizationTokenProvider {
     private val keyId = properties.apns.keyId
     private val teamId = properties.apns.teamId
     private val privateKey = parsePrivateKey(properties.apns.authKey)
     private var cached: CachedJwt? = null
 
     @Synchronized
-    fun token(): String {
+    override fun token(): String {
         val now = clock.instant()
         cached?.takeIf { Duration.between(it.createdAt, now) < CACHE_DURATION }?.let {
             return it.value

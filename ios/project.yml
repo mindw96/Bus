@@ -1,5 +1,10 @@
 name: UNISTBus
 
+configs:
+  Debug: debug
+  DebugAPNsSandbox: debug
+  Release: release
+
 options:
   bundleIdPrefix: kr.ac.unist
   deploymentTarget:
@@ -10,6 +15,7 @@ settings:
   base:
     SWIFT_VERSION: "6.0"
     IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+    DEVELOPMENT_TEAM: 4J7HGK26PF
     CURRENT_PROJECT_VERSION: "3"
     MARKETING_VERSION: "0.3.1"
     CLANG_ENABLE_MODULES: YES
@@ -20,6 +26,11 @@ settings:
       UNIST_BUS_APNS_ENVIRONMENT: development
       UNIST_BUS_PUSH_ENVIRONMENT: DEVELOPMENT
       UNIST_BUS_REMOTE_LIVE_ACTIVITY_ENABLED: NO
+    DebugAPNsSandbox:
+      UNIST_BUS_API_BASE_URL: https://unist-bus-api-60408467370.asia-northeast3.run.app
+      UNIST_BUS_APNS_ENVIRONMENT: development
+      UNIST_BUS_PUSH_ENVIRONMENT: DEVELOPMENT
+      UNIST_BUS_REMOTE_LIVE_ACTIVITY_ENABLED: YES
     Release:
       UNIST_BUS_API_BASE_URL: https://unist-bus-api-60408467370.asia-northeast3.run.app
       UNIST_BUS_APNS_ENVIRONMENT: production
@@ -43,6 +54,7 @@ targets:
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         LSRequiresIPhoneOS: true
         NSSupportsLiveActivities: true
+        NSSupportsLiveActivitiesFrequentUpdates: true
         NSAppTransportSecurity:
           NSAllowsLocalNetworking: true
         UNISTBusAPIBaseURL: $(UNIST_BUS_API_BASE_URL)
@@ -115,6 +127,18 @@ schemes:
       config: Debug
     test:
       config: Debug
+      gatherCoverageData: true
+      targets:
+        - name: UNISTBusTests
+
+  UNISTBusAPNsSandbox:
+    build:
+      targets:
+        UNISTBus: all
+    run:
+      config: DebugAPNsSandbox
+    test:
+      config: DebugAPNsSandbox
       gatherCoverageData: true
       targets:
         - name: UNISTBusTests

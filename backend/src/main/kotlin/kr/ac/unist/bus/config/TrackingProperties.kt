@@ -1,5 +1,6 @@
 package kr.ac.unist.bus.config
 
+import kr.ac.unist.bus.tracking.domain.PushEnvironment
 import org.springframework.boot.context.properties.ConfigurationProperties
 import java.time.Duration
 
@@ -47,10 +48,12 @@ data class PushProperties(
         val teamId: String = "",
         val bundleId: String = "",
         val authKey: String = "",
+        val allowedEnvironment: PushEnvironment = PushEnvironment.DEVELOPMENT,
     ) {
         override fun toString(): String =
             "Apns(enabled=$enabled, keyId=<redacted>, teamId=<redacted>, " +
-                "bundleId=$bundleId, authKey=<redacted>)"
+                "bundleId=$bundleId, authKey=<redacted>, " +
+                "allowedEnvironment=$allowedEnvironment)"
     }
 
     override fun toString(): String =

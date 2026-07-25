@@ -76,6 +76,8 @@ https://unist-bus-api-60408467370.asia-northeast3.run.app
 Cloud Run은 서울 `asia-northeast3` 리전, 최소 인스턴스 `0`, 서비스 전체 최대
 인스턴스 `1`로 운영합니다. iOS Release와 Android 빌드는 이 주소를 사용하며,
 iOS Debug는 로컬 개발을 위해 계속 `http://127.0.0.1:8080`을 사용합니다.
+실제 iPhone의 Sandbox APNs 시험은 운영 HTTPS API와 개발용 APNs 환경을
+결합한 `UNISTBusAPNsSandbox` 스킴을 사용합니다.
 
 ## Android 친구 테스트
 

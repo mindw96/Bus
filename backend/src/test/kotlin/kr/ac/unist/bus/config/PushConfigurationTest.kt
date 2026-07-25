@@ -1,10 +1,20 @@
 package kr.ac.unist.bus.config
 
+import kr.ac.unist.bus.tracking.domain.PushEnvironment
 import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 
 class PushConfigurationTest {
+    @Test
+    fun `APNs defaults to the development environment`() {
+        assertEquals(
+            PushEnvironment.DEVELOPMENT,
+            PushProperties.Apns().allowedEnvironment,
+        )
+    }
+
     @Test
     fun `enabled push rejects process-local memory storage`() {
         val validator = PushConfiguration().pushConfigurationValidator(
