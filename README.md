@@ -5,14 +5,14 @@
 유니버스는 민동욱 (Dongwook Min)이 독립적으로 개발·운영하는 버스 정보 앱입니다. UNIST가 제작·승인·운영하거나 보증하는 공식 서비스가 아닙니다.
 
 - 문의 이메일: [jeff4043@naver.com](mailto:jeff4043@naver.com)
-- 사용 방법과 자주 묻는 질문: [앱 지원 안내](docs/app-store/support.ko.md)
+- **앱 사용 방법·오류 해결·개인정보 문의: [앱 지원 안내](docs/app-store/support.ko.md)**
 
 울산과학기술원 정류장을 이용하는 분들을 위한 버스 정보 앱입니다. 제품은 해당 정류장의 다섯 노선 서비스를 먼저 완성한 뒤 울산 전역, 국내 전체 순서로 확장합니다. 현재 디자인은 v0.1로 동결하고 실제 데이터와 갱신 신뢰성 구현에 집중합니다.
 
 ## 현재 구현 범위
 
 - iOS 17+ SwiftUI 도착 목록
-- 핵심 정류장 `40234`, `40233(기점)`, `40235(종점)`을 동시에 조회해 한 목록으로 통합
+- 정류장 `40234`의 도착 정보와 기점 `40233`의 출발 정보를 탑승 목록으로 통합하며, 종점 `40235` 도착 버스는 제외
 - UNIST 교내 운행 5개 노선 `513`, `713`, `743`, `753`, `1115` 전체 표시
 - 절대 ETA, 관측 시각, `staleAt`, 운행 상태 모델
 - Spring Boot 4.1/Kotlin/Java 21 도착 정보 API
@@ -33,16 +33,14 @@
 
 현재 다섯 노선 fixture는 [UNIST 공식 오시는 길의 교내 운행 노선 안내](https://www.unist.ac.kr/unist/introduction/location.do)를 기준으로 합니다. 실제 TAGO 호출에는 공공데이터포털 인증키와 TAGO 정류소 ID 매핑이 필요하며, 준비 전에는 백엔드가 결정적 fixture provider로 실행됩니다.
 
-로컬 배포 식별자는 iOS 앱 `kr.ac.unist.bus`, Live Activity 확장
-`kr.ac.unist.bus.LiveActivity`, Android 앱 `kr.ac.unist.bus`로 맞췄습니다.
-iOS Push Notifications entitlement도 프로젝트에 연결되어 있지만, Apple Team과
-APNs 키가 없는 현재 기본 설정은 unsigned Simulator 빌드와 로컬 Live Activity만
-사용합니다.
+배포 식별자는 iOS 앱 `com.mindw.unistbus`, Live Activity 확장
+`com.mindw.unistbus.LiveActivity`, Android 앱 `com.mindw.unistbus`입니다.
+iOS 배포 빌드는 앱과 확장의 서명을 포함하며, 운영 HTTPS API와
+Production APNs 환경을 사용하도록 구성되어 있습니다.
 
-운영 백엔드는 Firebase·Firestore·FCM과 1분 주기 Cloud Scheduler가 연결되어
-Android 원격 잠금화면 갱신을 처리합니다. 일반 로컬 빌드는 자격증명 없이도
-동작하도록 계속 비활성 기본값을 사용하며, iOS APNs는 Apple Team과 키가
-준비될 때까지 비활성 상태입니다. 상세 상태는
+원격 잠금화면 갱신 구성은 Firestore·FCM·APNs와 1분 주기 Cloud Scheduler를
+이용합니다. 일반 로컬 개발 설정은 자격증명 없이도 실행할 수 있도록
+원격 갱신을 기본적으로 비활성화합니다. 개발 설정 방법은
 [원격 잠금화면 갱신 설정](docs/push-setup.md)을 참고합니다.
 
 ## 백엔드 실행
